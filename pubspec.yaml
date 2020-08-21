@@ -2,7 +2,7 @@ name: flutter_nsd
 description: Flutter Network Service Discovery
 version: 0.0.1
 author: Nimrod Dayan
-homepage:
+homepage: https://github.com/Nimrodda/flutter_nsd
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
