@@ -160,6 +160,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
+            val name = serviceInfo?.serviceName
             val ip = serviceInfo?.host?.hostAddress
             val port = serviceInfo?.port
 
@@ -168,6 +169,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
                 val result = mutableMapOf<String, Any>(
                         "ip" to ip,
                         "port" to port,
+                        "name" to name ?: ""
                 )
                 mainHandler.post {
                     channel.invokeMethod("onServiceResolved", result)
