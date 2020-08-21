@@ -132,6 +132,9 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
 
         override fun onDiscoveryStopped(serviceType: String) {
             Timber.d("NSD stopped")
+            mainHandler.post {
+                channel.invokeMethod("onDiscoveryStopped", null)
+            }
         }
 
         override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
@@ -169,7 +172,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
                 val result = mutableMapOf<String, Any>(
                         "ip" to ip,
                         "port" to port,
-                        "name" to name ?: ""
+                        "name" to (name ?: "")
                 )
                 mainHandler.post {
                     channel.invokeMethod("onServiceResolved", result)

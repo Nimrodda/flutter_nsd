@@ -4,14 +4,19 @@ import 'package:flutter/services.dart';
 
 class FlutterNsd {
   static const MethodChannel _channel = const MethodChannel('com.nimroddayan/flutter_nsd');
+  static final FlutterNsd _instance = FlutterNsd._internal();
 
-  StreamController<NsdServiceInfo> _streamController;
+  final _streamController = StreamController<NsdServiceInfo>();
 
-  Future<Stream<NsdServiceInfo>> discoverServices(String serviceType) async {
-    if (_streamController != null) return _streamController.stream;
+  factory FlutterNsd() {
+    return _instance;
+  }
 
-    _streamController = StreamController<NsdServiceInfo>();
+  FlutterNsd._internal();
 
+  Stream<NsdServiceInfo> get stream => _streamController.stream;
+
+  Future<void> discoverServices(String serviceType) async {
     await _channel.invokeMethod('startDiscovery', {'serviceType': '$serviceType'});
 
     _channel.setMethodCallHandler((call) {
@@ -25,6 +30,9 @@ class FlutterNsd {
         case 'onResolveFailed':
           _streamController.addError(NsdException());
           break;
+        case 'onDiscoveryStopped':
+          _channel.setMethodCallHandler(null);
+          break;
         case 'onServiceResolved':
           final String ip = call.arguments['ip'];
           final int port = call.arguments['port'];
@@ -36,17 +44,10 @@ class FlutterNsd {
       }
       return null;
     });
-
-    return _streamController.stream;
   }
 
   void stopDiscovery() async {
-    if (_streamController != null) {
-      await _channel.invokeMethod('stopDiscovery');
-      _channel.setMethodCallHandler(null);
-      await _streamController.close();
-      _streamController = null;
-    }
+    await _channel.invokeMethod('stopDiscovery');
   }
 }
 

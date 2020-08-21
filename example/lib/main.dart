@@ -7,29 +7,12 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  String _discoveredService = 'None';
-
-  FlutterNsd _flutterNsd;
-
-  @override
-  void initState() {
-    super.initState();
-    _flutterNsd = FlutterNsd();
-  }
+class MyApp extends StatelessWidget {
+  final _flutterNsd = FlutterNsd();
+  final services = <NsdServiceInfo>[];
 
   Future<void> startDiscovery() async {
-    final stream = await _flutterNsd.discoverServices('_questshare._tcp.');
-    await for (final nsdServiceInfo in stream) {
-      setState(() {
-        _discoveredService = '${nsdServiceInfo.ip}:${nsdServiceInfo.port}';
-      });
-    }
+    await _flutterNsd.discoverServices('_questshare._tcp.');
   }
 
   Future<void> stopDiscovery() async {
@@ -45,14 +28,36 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: <Widget>[
-            Text('Discovered service: $_discoveredService\n'),
-            RaisedButton(
-              child: Text('Start'),
-              onPressed: () async => startDiscovery(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                RaisedButton(
+                  child: Text('Start'),
+                  onPressed: () async => startDiscovery(),
+                ),
+                RaisedButton(
+                  child: Text('Stop'),
+                  onPressed: () async => stopDiscovery(),
+                ),
+              ],
             ),
-            RaisedButton(
-              child: Text('Stop'),
-              onPressed: () async => stopDiscovery(),
+            Expanded(
+              child: StreamBuilder(
+                stream: _flutterNsd.stream,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    services.add(snapshot.data as NsdServiceInfo);
+                    return ListView.builder(
+                      itemBuilder: (context, index) => ListTile(
+                        title: Text(services[index].name),
+                      ),
+                      itemCount: services.length,
+                    );
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
             ),
           ],
         ),
