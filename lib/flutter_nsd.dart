@@ -34,7 +34,7 @@ class FlutterNsd {
           _channel.setMethodCallHandler(null);
           break;
         case 'onServiceResolved':
-          final String ip = call.arguments['ip'];
+          final String ip = call.arguments['hostname'];
           final int port = call.arguments['port'];
           final String name = call.arguments['name'];
           _streamController.add(NsdServiceInfo(ip, port, name));
@@ -46,17 +46,17 @@ class FlutterNsd {
     });
   }
 
-  void stopDiscovery() async {
+  Future<void> stopDiscovery() async {
     await _channel.invokeMethod('stopDiscovery');
   }
 }
 
 class NsdServiceInfo {
-  final String ip;
+  final String hostname;
   final int port;
   final String name;
 
-  NsdServiceInfo(this.ip, this.port, this.name);
+  NsdServiceInfo(this.hostname, this.port, this.name);
 }
 
 class NsdException extends Error {

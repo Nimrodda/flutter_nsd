@@ -174,7 +174,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             if (ip != null && port != null) {
                 Timber.v("Found service on: $ip:$port")
                 val result = mutableMapOf<String, Any>(
-                        "ip" to ip,
+                        "hostname" to ip,
                         "port" to port,
                         "name" to (name ?: "")
                 )

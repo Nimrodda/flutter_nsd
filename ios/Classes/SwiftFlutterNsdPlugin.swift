@@ -77,6 +77,6 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
         print("Found service: \(String(describing: sender.hostName)) \(sender.port) \(sender.name)")
         channel.invokeMethod(
                 "onServiceResolved",
-                arguments: ["ip": sender.hostName, "port": sender.port, "name": sender.name])
+                arguments: ["hostname": sender.hostName, "port": sender.port, "name": sender.name])
     }
 }
