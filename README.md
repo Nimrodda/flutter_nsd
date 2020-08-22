@@ -13,6 +13,8 @@ to apply for entitlement from Apple for Local Network Access. Also, you'll have 
 make some modifications to your Info.plist file. For more info visit:
 https://developer.apple.com/videos/play/wwdc2020/10110/
 
+*You don't need to worry about this if you are just testing with a simulator.*
+
 ## iOS Help needed!
 
 I'm an Android developer, so it might be that the iOS implementation isn't great.
