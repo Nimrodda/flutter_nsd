@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   final services = <NsdServiceInfo>[];
 
   Future<void> startDiscovery() async {
-    await _flutterNsd.discoverServices('_questshare._tcp.');
+    await _flutterNsd.discoverServices('_example._tcp.');
   }
 
   Future<void> stopDiscovery() async {
