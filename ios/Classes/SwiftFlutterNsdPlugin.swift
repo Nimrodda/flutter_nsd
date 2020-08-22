@@ -40,13 +40,11 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
     }
 
     private func startDiscovery(_ serviceType: String) {
-        print("Starting discovery for \(serviceType)")
         netServiceBrowser.delegate = self
         netServiceBrowser.searchForServices(ofType: serviceType, inDomain: "")
     }
 
     private func stopDiscovery() {
-        print("Stopping discovery")
         netServiceBrowser.delegate = nil
         netServiceBrowser.stop()
     }
@@ -54,19 +52,13 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
     private func updateInterface() {
         for service in services {
             if service.port == -1 {
-                print("service \(service.name) of type \(service.type)" +
-                        " not yet resolved")
                 service.delegate = self
                 service.resolve(withTimeout: 10)
-            } else {
-                print("service \(service.name) of type \(service.type)," +
-                        "port \(service.port), addresses \(service.addresses)")
             }
         }
     }
 
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        print("adding a service")
         services.append(service)
         if !moreComing {
             self.updateInterface()
@@ -74,7 +66,6 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
     }
 
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        print("Found service: \(String(describing: sender.hostName)) \(sender.port) \(sender.name)")
         channel.invokeMethod(
                 "onServiceResolved",
                 arguments: ["hostname": sender.hostName, "port": sender.port, "name": sender.name])
