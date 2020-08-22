@@ -6,6 +6,13 @@ for discovering services that other devices provide on a local network.
 The plugin is currently under development and right now only supports discovery,
 but not registry of services.
 
+## Note about iOS
+
+To support legacy iOS devices, `NetServiceBrowser` is used, which means that you will need
+to apply for entitlement from Apple for Local Network Access. Also, you'll have to
+make some modifications to your Info.plist file. For more info visit:
+https://developer.apple.com/videos/play/wwdc2020/10110/
+
 ## iOS Help needed!
 
 I'm an Android developer, so it might be that the iOS implementation isn't great.
