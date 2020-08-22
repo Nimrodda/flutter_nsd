@@ -19,20 +19,30 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+/// Singleton API for managing Network Service Discovery
+///
+/// Get the singleton by calling FlutterNsd() and listen to its [stream] for [NsdServiceInfo] emissions.
+/// Then invoke [discoverServices] to start service discovery.
+/// Stop discovery by calling [stopDiscovery] when you're done.
+///
 class FlutterNsd {
   static const MethodChannel _channel = const MethodChannel('com.nimroddayan/flutter_nsd');
   static final FlutterNsd _instance = FlutterNsd._internal();
 
   final _streamController = StreamController<NsdServiceInfo>();
 
+  /// Factory for getting [FlutterNsd] singleton object
   factory FlutterNsd() {
     return _instance;
   }
 
   FlutterNsd._internal();
 
+  /// Stream that emits a [NsdServiceInfo] for each service discovered or a [NsdError] in case of an error.
   Stream<NsdServiceInfo> get stream => _streamController.stream;
 
+  /// Start network service discovery for [serviceType] for an infinite amount
+  /// of time (or until the app process is killed). Make sure to call [stopDiscovery] when you're done.
   Future<void> discoverServices(String serviceType) async {
     await _channel.invokeMethod('startDiscovery', {'serviceType': '$serviceType'});
 
@@ -63,11 +73,13 @@ class FlutterNsd {
     });
   }
 
+  /// Stop network service discovery
   Future<void> stopDiscovery() async {
     await _channel.invokeMethod('stopDiscovery');
   }
 }
 
+/// Info class for holding discovered service
 class NsdServiceInfo {
   final String hostname;
   final int port;
@@ -76,5 +88,6 @@ class NsdServiceInfo {
   NsdServiceInfo(this.hostname, this.port, this.name);
 }
 
+// Generic error thrown when an error has occurred during discovery
 class NsdException extends Error {
 }
