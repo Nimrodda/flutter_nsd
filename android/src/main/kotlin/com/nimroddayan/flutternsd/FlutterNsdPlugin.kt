@@ -122,7 +122,11 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             Timber.d("Service found serviceName: ${service.serviceName} serviceType: ${service.serviceType}")
             if (serviceType == service.serviceType) {
                 Timber.d("Resolving service $service")
-                nsdManager?.resolveService(service, resolveListener)
+                try {
+                    nsdManager?.resolveService(service, resolveListener)
+                } catch (e: Exception) {
+                    Timber.w("Cannot resolve service, service resolve in progress")
+                }
             }
         }
 
@@ -164,7 +168,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
 
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
             val name = serviceInfo?.serviceName
-            val ip = serviceInfo?.host?.hostAddress
+            val ip = serviceInfo?.host?.canonicalHostName
             val port = serviceInfo?.port
 
             if (ip != null && port != null) {
