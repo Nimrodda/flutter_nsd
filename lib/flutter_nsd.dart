@@ -39,7 +39,7 @@ class FlutterNsd {
   FlutterNsd._internal();
 
   /// Stream that emits a [NsdServiceInfo] for each service discovered or a [NsdError] in case of an error.
-  Stream<NsdServiceInfo> get stream => _streamController.stream;
+  Stream<NsdServiceInfo> get stream => _streamController.stream.asBroadcastStream();
 
   /// Start network service discovery for [serviceType] for an infinite amount
   /// of time (or until the app process is killed). Make sure to call [stopDiscovery] when you're done.
