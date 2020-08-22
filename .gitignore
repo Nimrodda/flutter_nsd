@@ -1,6 +1,7 @@
 .DS_Store
 .dart_tool/
-
+.fvm
+!.fvm/fvm_config.json
 .packages
 .pub/
 
