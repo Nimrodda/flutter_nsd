@@ -22,3 +22,5 @@ flutter:
       android:
         package: com.nimroddayan.flutternsd
         pluginClass: FlutterNsdPlugin
+      ios:
+        pluginClass: SwiftFlutterNsdPlugin
