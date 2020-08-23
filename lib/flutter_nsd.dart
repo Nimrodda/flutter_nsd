@@ -49,22 +49,22 @@ class FlutterNsd {
     _channel.setMethodCallHandler((call) {
       switch (call.method) {
         case 'onStartDiscoveryFailed':
-          _streamController.addError(NsdException());
+          _streamController.addError(NsdError());
           break;
         case 'onStopDiscoveryFailed':
-          _streamController.addError(NsdException());
+          _streamController.addError(NsdError());
           break;
         case 'onResolveFailed':
-          _streamController.addError(NsdException());
+          _streamController.addError(NsdError());
           break;
         case 'onDiscoveryStopped':
           _channel.setMethodCallHandler(null);
           break;
         case 'onServiceResolved':
-          final String ip = call.arguments['hostname'];
+          final String hostname = call.arguments['hostname'];
           final int port = call.arguments['port'];
           final String name = call.arguments['name'];
-          _streamController.add(NsdServiceInfo(ip, port, name));
+          _streamController.add(NsdServiceInfo(hostname, port, name));
           break;
         default:
           _streamController.addError(UnsupportedError('Method ${call.method} is unsupported'));
@@ -89,5 +89,5 @@ class NsdServiceInfo {
 }
 
 // Generic error thrown when an error has occurred during discovery
-class NsdException extends Error {
+class NsdError extends Error {
 }
