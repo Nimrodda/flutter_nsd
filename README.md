@@ -6,6 +6,10 @@ for discovering services that other devices provide on a local network.
 The plugin is currently under development and right now only supports discovery,
 but not registry of services.
 
+## Note about Android
+
+Android emulator doesn't support Network Service Discovery so you'll have to use a real device.
+
 ## Note about iOS
 
 To support legacy iOS devices, `NetServiceBrowser` is used, which means that you will need
