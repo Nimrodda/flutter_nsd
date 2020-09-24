@@ -26,25 +26,30 @@ import 'package:flutter/services.dart';
 /// Stop discovery by calling [stopDiscovery] when you're done.
 ///
 class FlutterNsd {
-  static const MethodChannel _channel = const MethodChannel('com.nimroddayan/flutter_nsd');
+  static const MethodChannel _channel =
+      const MethodChannel('com.nimroddayan/flutter_nsd');
   static final FlutterNsd _instance = FlutterNsd._internal();
 
   final _streamController = StreamController<NsdServiceInfo>();
+  Stream<NsdServiceInfo> _stream;
 
   /// Factory for getting [FlutterNsd] singleton object
   factory FlutterNsd() {
     return _instance;
   }
 
-  FlutterNsd._internal();
+  FlutterNsd._internal() {
+    this._stream = _streamController.stream.asBroadcastStream();
+  }
 
   /// Stream that emits a [NsdServiceInfo] for each service discovered or a [NsdError] in case of an error.
-  Stream<NsdServiceInfo> get stream => _streamController.stream.asBroadcastStream();
+  Stream<NsdServiceInfo> get stream => _stream;
 
   /// Start network service discovery for [serviceType] for an infinite amount
   /// of time (or until the app process is killed). Make sure to call [stopDiscovery] when you're done.
   Future<void> discoverServices(String serviceType) async {
-    await _channel.invokeMethod('startDiscovery', {'serviceType': '$serviceType'});
+    await _channel
+        .invokeMethod('startDiscovery', {'serviceType': '$serviceType'});
 
     _channel.setMethodCallHandler((call) {
       switch (call.method) {
@@ -67,7 +72,8 @@ class FlutterNsd {
           _streamController.add(NsdServiceInfo(hostname, port, name));
           break;
         default:
-          _streamController.addError(UnsupportedError('Method ${call.method} is unsupported'));
+          _streamController.addError(
+              UnsupportedError('Method ${call.method} is unsupported'));
       }
       return null;
     });
@@ -89,5 +95,4 @@ class NsdServiceInfo {
 }
 
 // Generic error thrown when an error has occurred during discovery
-class NsdError extends Error {
-}
+class NsdError extends Error {}
