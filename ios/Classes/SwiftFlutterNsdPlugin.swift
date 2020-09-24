@@ -23,13 +23,12 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
         switch call.method {
         case "startDiscovery":
             let args = call.arguments as? [String: Any]
-            let serviceType = args?["serviceType"] as? String
-            if serviceType == nil {
+            guard let serviceType = args?["serviceType"] as? String else {
                 result(FlutterError(code: "1001", message: "Service type cannot be null", details: nil))
                 return
             }
 
-            self.startDiscovery(serviceType!)
+            self.startDiscovery(serviceType)
             result(nil)
         case "stopDiscovery":
             self.stopDiscovery()
