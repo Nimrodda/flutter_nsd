@@ -19,11 +19,6 @@ https://developer.apple.com/videos/play/wwdc2020/10110/
 
 *You don't need to worry about this if you are just testing with a simulator.*
 
-## iOS Help needed!
-
-I'm an Android developer, so it might be that the iOS implementation isn't great.
-I'd really appreciate help from an iOS developer, who's willing to review the code and improve it.
-
 ## Getting Started
 
 Initialize `FlutterNsd` singleton and listen to the stream:
@@ -63,6 +58,30 @@ void stopDiscoveryButton() async {
 ```
 
 See the example project for a more detailed Flutter app example.
+
+## Contributing
+
+Feel free to file a Github Issue if you'd like to discuss, improve, found a bug, whatever.
+Contributions are welcome via pull requests and highly appreciated (Especially for iOS - see below).
+
+### Building
+
+This project uses a tool call [fvm](https://github.com/leoafarias/fvm) to conveniently manage the
+Flutter version used on each revision. Before compiling the example you'll need to [install this
+tool](https://github.com/leoafarias/fvm#usage) and then run the following in terminal:
+
+```
+fvm install
+```
+
+This will install the relevant Flutter version for the revision you checked out.
+Once that's done, you're ready to work with this project like any other Flutter project.
+
+### iOS Help needed!
+
+I'm an Android developer, so it might be that the iOS implementation isn't great.
+I'd really appreciate help from an iOS developer, who's willing to review the code and improve it.
+
 
 ## License
 
