@@ -11,6 +11,12 @@
       <sourceFolder url="file://$MODULE_DIR$/lib" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" generated="true" />
       <excludeFolder url="file://$MODULE_DIR$/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.fvm/flutter_sdk/bin/cache/dart-sdk/lib/_internal/js_runtime/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.fvm/flutter_sdk/bin/cache/dart-sdk/lib/_internal/js_runtime/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.fvm/flutter_sdk/bin/cache/dart-sdk/lib/_internal/js_runtime/build" />
+      <excludeFolder url="file://$MODULE_DIR$/.fvm/flutter_sdk/packages/flutter_tools/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/.fvm/flutter_sdk/packages/flutter_tools/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/.fvm/flutter_sdk/packages/flutter_tools/build" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
       <excludeFolder url="file://$MODULE_DIR$/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
