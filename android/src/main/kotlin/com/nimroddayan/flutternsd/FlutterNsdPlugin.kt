@@ -184,19 +184,23 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
-            val name = serviceInfo?.serviceName
-            val ip = serviceInfo?.host?.canonicalHostName
-            val port = serviceInfo?.port
+            serviceInfo?.let { serviceInfo ->
+                val hostname = serviceInfo.host?.canonicalHostName
+                val port = serviceInfo.port
+                val name = serviceInfo.serviceName
+                val txt = serviceInfo.getAttributes()
 
-            if (ip != null && port != null) {
-                Timber.v("Found service on: $ip:$port")
-                val result = mutableMapOf<String, Any>(
-                        "hostname" to ip,
+                if (hostname != null && port != null) {
+                    Timber.v("Found service on: $hostname:$port")
+                    val result = mapOf<String, Any?>(
+                        "hostname" to hostname,
                         "port" to port,
-                        "name" to (name ?: "")
-                )
-                mainHandler.post {
-                    channel.invokeMethod("onServiceResolved", result)
+                        "name" to name,
+                        "txt" to txt
+                    )
+                    mainHandler.post {
+                        channel.invokeMethod("onServiceResolved", result)
+                    }
                 }
             }
         }

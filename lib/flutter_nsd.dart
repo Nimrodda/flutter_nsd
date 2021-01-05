@@ -16,6 +16,7 @@
  */
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 
@@ -69,7 +70,8 @@ class FlutterNsd {
           final String hostname = call.arguments['hostname'];
           final int port = call.arguments['port'];
           final String name = call.arguments['name'];
-          _streamController.add(NsdServiceInfo(hostname, port, name));
+          final Map<String, Uint8List> txt = Map.from(call.arguments['txt']);
+          _streamController.add(NsdServiceInfo(hostname, port, name, txt));
           break;
         default:
           _streamController.addError(
@@ -90,8 +92,9 @@ class NsdServiceInfo {
   final String hostname;
   final int port;
   final String name;
+  final Map<String, Uint8List> txt;
 
-  NsdServiceInfo(this.hostname, this.port, this.name);
+  NsdServiceInfo(this.hostname, this.port, this.name, this.txt);
 }
 
 // Generic error thrown when an error has occurred during discovery
