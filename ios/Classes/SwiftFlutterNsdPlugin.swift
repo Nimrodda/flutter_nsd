@@ -65,8 +65,19 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
     }
 
     public func netServiceDidResolveAddress(_ sender: NetService) {
-        channel.invokeMethod(
-                "onServiceResolved",
-                arguments: ["hostname": sender.hostName, "port": sender.port, "name": sender.name])
+        var port: Int? = sender.port
+        if port == -1 {
+            port = nil
+        }
+        var txt: [String: FlutterStandardTypedData]? = nil;
+        if let txtRecordData = sender.txtRecordData() {
+            txt = NetService.dictionary(fromTXTRecord: txtRecordData).mapValues( { (value) -> FlutterStandardTypedData in
+                FlutterStandardTypedData(bytes: value)
+            })
+        }
+
+        let arguments: [String: Any?] = ["hostname": sender.hostName, "port": port, "name": sender.name, "txt": txt];
+
+        channel.invokeMethod("onServiceResolved", arguments: arguments)
     }
 }
