@@ -32,7 +32,7 @@ class FlutterNsd {
   static final FlutterNsd _instance = FlutterNsd._internal();
 
   final _streamController = StreamController<NsdServiceInfo>();
-  Stream<NsdServiceInfo> _stream;
+  late Stream<NsdServiceInfo> _stream;
 
   /// Factory for getting [FlutterNsd] singleton object
   factory FlutterNsd() {
@@ -52,7 +52,7 @@ class FlutterNsd {
     await _channel
         .invokeMethod('startDiscovery', {'serviceType': '$serviceType'});
 
-    _channel.setMethodCallHandler((call) {
+    _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onStartDiscoveryFailed':
           _streamController.addError(NsdError());
@@ -74,10 +74,8 @@ class FlutterNsd {
           _streamController.add(NsdServiceInfo(hostname, port, name, txt));
           break;
         default:
-          _streamController.addError(
-              UnsupportedError('Method ${call.method} is unsupported'));
+          throw MissingPluginException();
       }
-      return null;
     });
   }
 
@@ -89,10 +87,10 @@ class FlutterNsd {
 
 /// Info class for holding discovered service
 class NsdServiceInfo {
-  final String hostname;
-  final int port;
-  final String name;
-  final Map<String, Uint8List> txt;
+  final String? hostname;
+  final int? port;
+  final String? name;
+  final Map<String, Uint8List>? txt;
 
   NsdServiceInfo(this.hostname, this.port, this.name, this.txt);
 }
