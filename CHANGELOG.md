@@ -1,3 +1,9 @@
+## 1.0.0
+
+* Changed version scheme to adhere to pub version guidelines (dropping the 'alpha')
+* Updated README.md with detailed instructions on support for iOS 14
+* Removed Flutter version bounds so that the plugin can be used with Flutter 2+
+
 ## 1.0.0-alpha03
 
 * Increased Dart SDK to 2.12.0-0

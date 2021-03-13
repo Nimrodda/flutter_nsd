@@ -1,28 +1,9 @@
 # Flutter Network Service Discovery plugin
 
-This Flutter plugin provides Network Service Discovery (NSD) API on iOS and Android
+Flutter plugin that provides Network Service Discovery (NSD) API on iOS and Android
 for discovering services that other devices provide on a local network.
 
-The plugin is currently under development and right now only supports discovery,
-but not registry of services.
-
-## Note about Android
-
-Android emulator doesn't support Network Service Discovery so you'll have to use a real device.
-
-## Note about iOS
-
-To support legacy iOS devices, `NetServiceBrowser` is used, which means that you will need
-to apply for entitlement from Apple for Local Network Access. Also, you'll have to
-make some modifications to your Info.plist file. For more info visit:
-https://developer.apple.com/videos/play/wwdc2020/10110/
-
-*You don't need to worry about this if you are just testing with a simulator.*
-
-## iOS Help needed!
-
-I'm an Android developer, so it might be that the iOS implementation isn't great.
-I'd really appreciate help from an iOS developer, who's willing to review the code and improve it.
+The plugin is currently only supports discovery, but not registry of services.
 
 ## Getting Started
 
@@ -64,9 +45,31 @@ void stopDiscoveryButton() async {
 
 See the example project for a more detailed Flutter app example.
 
+## Note about Android
+
+Minimum Android API version supported is 21.
+
+Android emulator doesn't support Network Service Discovery so you'll have to use a real device.
+
+## Note about iOS
+
+This plugin uses `NetServiceBrowser` and can therefore support iOS version 9+.
+
+On iOS 14+, you need to modify Info.plist file and add two keys:
+`Bonjour Services` - this is an array, the first item should be the service you're trying to
+discover. For example, `_example._tcp.`.
+`Privacy - Local Network Usage Description` - this key is for granting the app local network access.
+ The value is the text which will be shown to the user in a permission dialog once you call
+ `flutterNsd.discoverServices()`.
+
+For more info about network discovery on iOS 14, I suggest you watch this video:
+https://developer.apple.com/videos/play/wwdc2020/10110/
+
+*Note that you don't need to worry about modifying Info.plist if you are just testing with a simulator.*
+
 ## License
 
-Copyright 2020 Nimrod Dayan nimroddayan.com
+Copyright 2021 Nimrod Dayan nimroddayan.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
