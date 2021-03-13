@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Nimrod Dayan nimroddayan.com
+ * Copyright 2021 Nimrod Dayan nimroddayan.com
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ class MyApp extends StatelessWidget {
                     services.add(snapshot.data as NsdServiceInfo);
                     return ListView.builder(
                       itemBuilder: (context, index) => ListTile(
-                        title: Text(services[index].name),
+                        title: Text(services[index].name ?? 'Invalid service name'),
                       ),
                       itemCount: services.length,
                     );
