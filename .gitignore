@@ -4,5 +4,5 @@
 !.fvm/fvm_config.json
 .packages
 .pub/
-
+pubspec.lock
 build/
