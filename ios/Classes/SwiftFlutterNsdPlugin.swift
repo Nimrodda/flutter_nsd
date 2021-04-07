@@ -56,6 +56,10 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
         }
     }
 
+    public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
+        channel.invokeMethod("onStartDiscoveryFailed", arguments: nil);
+    }
+
     public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
         channel.invokeMethod("onDiscoveryStopped", arguments: nil);
         netServiceBrowser.delegate = nil
