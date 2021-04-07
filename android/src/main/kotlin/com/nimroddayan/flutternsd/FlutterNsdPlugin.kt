@@ -115,6 +115,9 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             nsdManager?.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
         } catch (ex: Exception) {
             Timber.w("Cannot start, NSD is already running")
+            mainHandler.post {
+                channel.invokeMethod("onStartDiscoveryFailed", null);
+            }
         }
     }
 
