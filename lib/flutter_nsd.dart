@@ -70,6 +70,9 @@ class FlutterNsd {
           ));
           break;
         case 'onDiscoveryStopped':
+          _streamController.addError(NsdError(
+            errorCode: NsdErrorCode.discoveryStopped,
+          ));
           _channel.setMethodCallHandler(null);
           break;
         case 'onServiceResolved':
@@ -106,6 +109,7 @@ enum NsdErrorCode {
   startDiscoveryFailed,
   stopDiscoveryFailed,
   onResolveFailed,
+  discoveryStopped,
 }
 
 // Generic error thrown when an error has occurred during discovery
