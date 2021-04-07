@@ -44,7 +44,6 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
     }
 
     private func stopDiscovery() {
-        netServiceBrowser.delegate = nil
         netServiceBrowser.stop()
     }
 
@@ -55,6 +54,11 @@ public class SwiftFlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDe
                 service.resolve(withTimeout: 10)
             }
         }
+    }
+
+    public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
+        channel.invokeMethod("onDiscoveryStopped", arguments: nil);
+        netServiceBrowser.delegate = nil
     }
 
     public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
