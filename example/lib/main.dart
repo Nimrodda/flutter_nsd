@@ -24,16 +24,38 @@ void main() {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  final _flutterNsd = FlutterNsd();
+class MyApp extends StatefulWidget {
+  @override
+  State createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final flutterNsd = FlutterNsd();
   final services = <NsdServiceInfo>[];
+  bool initialStart = true;
+
+  _MyAppState() {
+    // Try one restart if initial start fails, which happens on hot-restart of
+    // the flutter app.
+    flutterNsd.stream.listen((_) {}, onError: (e) async {
+      if (e is NsdError) {
+        if (e.errorCode == NsdErrorCode.startDiscoveryFailed && initialStart) {
+          await stopDiscovery();
+        } else if (e.errorCode == NsdErrorCode.discoveryStopped &&
+            initialStart) {
+          initialStart = false;
+          await startDiscovery();
+        }
+      }
+    });
+  }
 
   Future<void> startDiscovery() async {
-    await _flutterNsd.discoverServices('_example._tcp.');
+    await flutterNsd.discoverServices('_example._tcp.');
   }
 
   Future<void> stopDiscovery() async {
-    _flutterNsd.stopDiscovery();
+    flutterNsd.stopDiscovery();
   }
 
   @override
@@ -60,7 +82,7 @@ class MyApp extends StatelessWidget {
             ),
             Expanded(
               child: StreamBuilder(
-                stream: _flutterNsd.stream,
+                stream: flutterNsd.stream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     services.add(snapshot.data as NsdServiceInfo);
