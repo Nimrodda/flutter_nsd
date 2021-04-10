@@ -114,9 +114,9 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         try {
             nsdManager?.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
         } catch (ex: Exception) {
-            Timber.w("Cannot start, NSD is already running")
+            Timber.w(ex, "Cannot start, NSD is already running")
             mainHandler.post {
-                channel.invokeMethod("onStartDiscoveryFailed", null);
+                channel.invokeMethod("onStartDiscoveryFailed", null)
             }
         }
     }
@@ -126,7 +126,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         try {
             nsdManager?.stopServiceDiscovery(discoveryListener)
         } catch (ex: Exception) {
-            Timber.w("Cannot stop NSD when it's not started")
+            Timber.w(ex, "Cannot stop NSD when it's not started")
         }
     }
 
@@ -145,7 +145,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
                 try {
                     nsdManager?.resolveService(service, resolveListener)
                 } catch (e: Exception) {
-                    Timber.w("Cannot resolve service, service resolve in progress")
+                    Timber.w(e, "Cannot resolve service, service resolve in progress")
                 }
             }
         }

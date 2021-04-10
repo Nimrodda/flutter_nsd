@@ -41,8 +41,7 @@ class _MyAppState extends State<MyApp> {
       if (e is NsdError) {
         if (e.errorCode == NsdErrorCode.startDiscoveryFailed && initialStart) {
           await stopDiscovery();
-        } else if (e.errorCode == NsdErrorCode.discoveryStopped &&
-            initialStart) {
+        } else if (e.errorCode == NsdErrorCode.discoveryStopped && initialStart) {
           initialStart = false;
           await startDiscovery();
         }

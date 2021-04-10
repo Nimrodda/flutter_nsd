@@ -3,7 +3,7 @@
 Flutter plugin that provides Network Service Discovery (NSD) API on iOS and Android
 for discovering services that other devices provide on a local network.
 
-The plugin is currently only supports discovery, but not registry of services.
+The plugin currently only supports discovery, but not registry of services.
 
 ## Getting Started
 
@@ -12,13 +12,12 @@ Initialize `FlutterNsd` singleton and listen to the stream:
 ```dart
 void init() async {
   final flutterNsd = FlutterNsd();
-  final stream = flutterNsd.stream;
 
-  await for (final nsdServiceInfo in stream) {
+  flutterNsd.stream.listen((_) {}, onError: (e) async {
     print('Discovered service name: ${nsdServiceInfo.name}');
     print('Discovered service hostname/IP: ${nsdServiceInfo.hostname}');
     print('Discovered service port: ${nsdServiceInfo.port}');
-  }
+  });
 }
 ```
 
@@ -55,17 +54,17 @@ Android emulator doesn't support Network Service Discovery so you'll have to use
 
 This plugin uses `NetServiceBrowser` and can therefore support iOS version 9+.
 
-On iOS 14+, you need to modify Info.plist file and add two keys:
+On iOS 14+, you need to modify `Info.plist` file and add two keys:
 `Bonjour Services` - this is an array, the first item should be the service you're trying to
 discover. For example, `_example._tcp.`.
 `Privacy - Local Network Usage Description` - this key is for granting the app local network access.
  The value is the text which will be shown to the user in a permission dialog once you call
  `flutterNsd.discoverServices()`.
 
-For more info about network discovery on iOS 14, I suggest you watch this video:
-https://developer.apple.com/videos/play/wwdc2020/10110/
+For more info about network discovery on iOS 14, I suggest you watch
+this [video](https://developer.apple.com/videos/play/wwdc2020/10110/).
 
-*Note that you don't need to worry about modifying Info.plist if you are just testing with a simulator.*
+*Note that you don't need to worry about modifying `Info.plist` if you are just testing with a simulator.*
 
 ## License
 
