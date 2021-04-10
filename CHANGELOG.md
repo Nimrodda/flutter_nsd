@@ -1,3 +1,9 @@
+## 1.1.0
+
+* Fixed #3: discovery can't start after hot-restart (thanks @julianscheel). `NsdError` now has
+a property that provides more info about the error via the new enum `NsdErrorCode`. Check the
+example for more info how to use it.
+
 ## 1.0.0
 
 * Changed version scheme to adhere to pub version guidelines (dropping the 'alpha')
