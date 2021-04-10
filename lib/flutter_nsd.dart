@@ -55,15 +55,24 @@ class FlutterNsd {
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onStartDiscoveryFailed':
-          _streamController.addError(NsdError());
+          _streamController.addError(NsdError(
+            errorCode: NsdErrorCode.startDiscoveryFailed,
+          ));
           break;
         case 'onStopDiscoveryFailed':
-          _streamController.addError(NsdError());
+          _streamController.addError(NsdError(
+            errorCode: NsdErrorCode.stopDiscoveryFailed,
+          ));
           break;
         case 'onResolveFailed':
-          _streamController.addError(NsdError());
+          _streamController.addError(NsdError(
+            errorCode: NsdErrorCode.onResolveFailed,
+          ));
           break;
         case 'onDiscoveryStopped':
+          _streamController.addError(NsdError(
+            errorCode: NsdErrorCode.discoveryStopped,
+          ));
           _channel.setMethodCallHandler(null);
           break;
         case 'onServiceResolved':
@@ -95,5 +104,18 @@ class NsdServiceInfo {
   NsdServiceInfo(this.hostname, this.port, this.name, this.txt);
 }
 
+/// List of possible error codes of NsdError
+enum NsdErrorCode {
+  startDiscoveryFailed,
+  stopDiscoveryFailed,
+  onResolveFailed,
+  discoveryStopped,
+}
+
 // Generic error thrown when an error has occurred during discovery
-class NsdError extends Error {}
+class NsdError extends Error {
+  /// The cause of this [NsdError].
+  final NsdErrorCode errorCode;
+
+  NsdError({required this.errorCode});
+}
