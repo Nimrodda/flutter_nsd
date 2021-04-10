@@ -113,7 +113,9 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         this.serviceType = serviceType
         try {
             nsdManager?.discoverServices(serviceType, NsdManager.PROTOCOL_DNS_SD, discoveryListener)
-        } catch (ex: Exception) {
+        } catch (ex: IllegalArgumentException) {
+            // Happens when the listener is already registered - indicating that there's already
+            // an ongoing discovery
             Timber.w(ex, "Cannot start, NSD is already running")
             mainHandler.post {
                 channel.invokeMethod("onStartDiscoveryFailed", null)
@@ -125,12 +127,16 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         Timber.d("Stopping NSD")
         try {
             nsdManager?.stopServiceDiscovery(discoveryListener)
-        } catch (ex: Exception) {
+        } catch (ex: IllegalArgumentException) {
+            // Happens when the listener is not registered - indicating that there was no ongoing
+            // discovery.
             Timber.w(ex, "Cannot stop NSD when it's not started")
+            mainHandler.post {
+              channel.invokeMethod("onStopDiscoveryFailed", null)
+            }
         }
     }
 
-    // Instantiate a new DiscoveryListener
     private val discoveryListener = object : NsdManager.DiscoveryListener {
 
         // Called as soon as service discovery begins.
