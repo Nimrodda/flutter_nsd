@@ -13,10 +13,14 @@ Initialize `FlutterNsd` singleton and listen to the stream:
 void init() async {
   final flutterNsd = FlutterNsd();
 
-  flutterNsd.stream.listen((_) {}, onError: (e) async {
+  flutterNsd.stream.listen((nsdServiceInfo) {
     print('Discovered service name: ${nsdServiceInfo.name}');
     print('Discovered service hostname/IP: ${nsdServiceInfo.hostname}');
     print('Discovered service port: ${nsdServiceInfo.port}');
+  }, onError: (e) {
+    if (e is NsdError) {
+      // Check e.errorCode for the specific error
+    }
   });
 }
 ```
