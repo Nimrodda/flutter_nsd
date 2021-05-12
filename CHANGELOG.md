@@ -1,3 +1,7 @@
+## 1.2.0
+
+* #6 Android: Fixed failure to resolve service sequentially (Thanks @julianscheel).
+
 ## 1.1.0
 
 * Fixed #3: discovery can't start after hot-restart (thanks @julianscheel). `NsdError` now has
