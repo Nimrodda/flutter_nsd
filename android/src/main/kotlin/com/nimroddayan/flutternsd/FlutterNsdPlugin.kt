@@ -32,6 +32,8 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import timber.log.Timber
 import java.lang.Exception
+import java.util.LinkedList
+import java.util.Queue
 
 /** FlutterNsdPlugin */
 class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
@@ -45,6 +47,13 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
 
     private lateinit var serviceType: String
     private lateinit var mainHandler: Handler
+
+    /// The serviceResolveQueue is used to sequence the service resolve calls
+    ///
+    /// Android's NsdManager does not allow multiple resolve procedures in
+    /// parallel, thus they must be seqeunced to avoid running into errors if
+    /// devices are discovered quickly after another.
+    private var serviceResolveQueue: Queue<NsdServiceInfo> = LinkedList<NsdServiceInfo>()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         nsdManager = getSystemService(flutterPluginBinding.applicationContext, NsdManager::class.java)
@@ -137,6 +146,14 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    private fun resolveService(service: NsdServiceInfo) {
+        try {
+            nsdManager?.resolveService(service, resolveListener)
+        } catch (e: Exception) {
+            Timber.w(e, "Cannot resolve service, service resolve in progress")
+        }
+    }
+
     private val discoveryListener = object : NsdManager.DiscoveryListener {
 
         // Called as soon as service discovery begins.
@@ -148,10 +165,13 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             Timber.d("Service found serviceName: ${service.serviceName} serviceType: ${service.serviceType}")
             if (serviceType == service.serviceType) {
                 Timber.d("Resolving service $service")
-                try {
-                    nsdManager?.resolveService(service, resolveListener)
-                } catch (e: Exception) {
-                    Timber.w(e, "Cannot resolve service, service resolve in progress")
+                serviceResolveQueue.add(service)
+
+                // Resolve service if no other service is currently being
+                // resolved. Otherwise do nothing here, the service will be
+                // resolved once other services from the queue were resolved.
+                if (serviceResolveQueue.count() == 1) {
+                    resolveService(serviceResolveQueue.peek())
                 }
             }
         }
@@ -190,6 +210,12 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             mainHandler.post {
                 channel.invokeMethod("onResolveFailed", errorCode)
             }
+
+            serviceResolveQueue.remove();
+            // Resolve next service from queue
+            if (!serviceResolveQueue.isEmpty()) {
+                resolveService(serviceResolveQueue.peek())
+            }
         }
 
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
@@ -207,6 +233,12 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             )
             mainHandler.post {
                 channel.invokeMethod("onServiceResolved", result)
+            }
+
+            serviceResolveQueue.remove();
+            // Resolve next service from queue
+            if (!serviceResolveQueue.isEmpty()) {
+                resolveService(serviceResolveQueue.peek())
             }
         }
     }
