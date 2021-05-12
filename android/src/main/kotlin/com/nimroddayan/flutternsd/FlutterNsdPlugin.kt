@@ -211,11 +211,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
                 channel.invokeMethod("onResolveFailed", errorCode)
             }
 
-            serviceResolveQueue.remove();
-            // Resolve next service from queue
-            if (!serviceResolveQueue.isEmpty()) {
-                resolveService(serviceResolveQueue.peek())
-            }
+            processQueue()
         }
 
         override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
@@ -235,6 +231,10 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
                 channel.invokeMethod("onServiceResolved", result)
             }
 
+            processQueue()
+        }
+
+        private fun processQueue() {
             serviceResolveQueue.remove();
             // Resolve next service from queue
             if (!serviceResolveQueue.isEmpty()) {
