@@ -33,27 +33,53 @@ class _MyAppState extends State<MyApp> {
   final flutterNsd = FlutterNsd();
   final services = <NsdServiceInfo>[];
   bool initialStart = true;
+  bool _scanning = false;
 
-  _MyAppState() {
+  _MyAppState();
+
+  void initState() {
+    super.initState();
+
     // Try one restart if initial start fails, which happens on hot-restart of
     // the flutter app.
-    flutterNsd.stream.listen((_) {}, onError: (e) async {
-      if (e is NsdError) {
-        if (e.errorCode == NsdErrorCode.startDiscoveryFailed && initialStart) {
-          await stopDiscovery();
-        } else if (e.errorCode == NsdErrorCode.discoveryStopped && initialStart) {
-          initialStart = false;
-          await startDiscovery();
+    flutterNsd.stream.listen(
+      (NsdServiceInfo service) {
+        setState(() {
+          services.add(service);
+        });
+      },
+      onError: (e) async {
+        if (e is NsdError) {
+          if (e.errorCode == NsdErrorCode.startDiscoveryFailed &&
+              initialStart) {
+            await stopDiscovery();
+          } else if (e.errorCode == NsdErrorCode.discoveryStopped &&
+              initialStart) {
+            initialStart = false;
+            await startDiscovery();
+          }
         }
-      }
-    });
+      },
+    );
   }
 
   Future<void> startDiscovery() async {
+    if (_scanning) return;
+
+    setState(() {
+      services.clear();
+      _scanning = true;
+    });
     await flutterNsd.discoverServices('_example._tcp.');
   }
 
   Future<void> stopDiscovery() async {
+    if (!_scanning) return;
+
+    setState(() {
+      services.clear();
+      _scanning = false;
+    });
     flutterNsd.stopDiscovery();
   }
 
@@ -69,37 +95,39 @@ class _MyAppState extends State<MyApp> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                RaisedButton(
+                ElevatedButton(
                   child: Text('Start'),
                   onPressed: () async => startDiscovery(),
                 ),
-                RaisedButton(
+                ElevatedButton(
                   child: Text('Stop'),
                   onPressed: () async => stopDiscovery(),
                 ),
               ],
             ),
             Expanded(
-              child: StreamBuilder(
-                stream: flutterNsd.stream,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    services.add(snapshot.data as NsdServiceInfo);
-                    return ListView.builder(
-                      itemBuilder: (context, index) => ListTile(
-                        title: Text(services[index].name ?? 'Invalid service name'),
-                      ),
-                      itemCount: services.length,
-                    );
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
+              child: _buildMainWidget(context),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildMainWidget(BuildContext context) {
+    if (services.isEmpty && _scanning) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (services.isEmpty && !_scanning) {
+      return SizedBox.shrink();
+    } else {
+      return ListView.builder(
+        itemBuilder: (context, index) => ListTile(
+          title: Text(services[index].name ?? 'Invalid service name'),
+        ),
+        itemCount: services.length,
+      );
+    }
   }
 }
