@@ -5,6 +5,15 @@ for discovering services that other devices provide on a local network.
 
 The plugin currently only supports discovery, but not registry of services.
 
+## Install
+
+Add the dependency to pubspec.yaml:
+
+```
+dependencies:
+  flutter_nsd: ^1.2.0
+```
+
 ## Getting Started
 
 Initialize `FlutterNsd` singleton and listen to the stream:
