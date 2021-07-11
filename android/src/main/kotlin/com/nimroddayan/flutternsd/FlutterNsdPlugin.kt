@@ -23,7 +23,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat.getSystemService
-
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -31,7 +30,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import timber.log.Timber
-import java.lang.Exception
 import java.util.LinkedList
 import java.util.Queue
 
@@ -51,9 +49,9 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
     /// The serviceResolveQueue is used to sequence the service resolve calls
     ///
     /// Android's NsdManager does not allow multiple resolve procedures in
-    /// parallel, thus they must be seqeunced to avoid running into errors if
+    /// parallel, thus they must be sequenced to avoid running into errors if
     /// devices are discovered quickly after another.
-    private var serviceResolveQueue: Queue<NsdServiceInfo> = LinkedList<NsdServiceInfo>()
+    private var serviceResolveQueue: Queue<NsdServiceInfo> = LinkedList()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         nsdManager = getSystemService(flutterPluginBinding.applicationContext, NsdManager::class.java)
@@ -73,11 +71,12 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
     // depending on the user's project. onAttachedToEngine or registerWith must both be defined
     // in the same class.
     companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val channel = MethodChannel(registrar.messenger(), "com.nimroddayan/flutter_nsd")
-            channel.setMethodCallHandler(FlutterNsdPlugin())
-        }
+      @Suppress("unused")
+      @JvmStatic
+      fun registerWith(registrar: Registrar) {
+        val channel = MethodChannel(registrar.messenger(), "com.nimroddayan/flutter_nsd")
+        channel.setMethodCallHandler(FlutterNsdPlugin())
+      }
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -146,13 +145,13 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
-    private fun resolveService(service: NsdServiceInfo) {
-        try {
-            nsdManager?.resolveService(service, resolveListener)
-        } catch (e: Exception) {
-            Timber.w(e, "Cannot resolve service, service resolve in progress")
-        }
+  private fun resolveService(service: NsdServiceInfo?) {
+    try {
+      nsdManager?.resolveService(service, resolveListener)
+    } catch (e: Exception) {
+      Timber.w(e, "Cannot resolve service, service resolve in progress")
     }
+  }
 
     private val discoveryListener = object : NsdManager.DiscoveryListener {
 
@@ -218,10 +217,10 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
             val hostname = serviceInfo?.host?.canonicalHostName
             val port = serviceInfo?.port
             val name = serviceInfo?.serviceName
-            val txt = serviceInfo?.getAttributes()
+            val txt = serviceInfo?.attributes
 
             Timber.v("Resolved service: $name-$hostname:$port $txt")
-            val result = mapOf<String, Any?>(
+            val result = mapOf(
                 "hostname" to hostname,
                 "port" to port,
                 "name" to name,
@@ -235,7 +234,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
         }
 
         private fun processQueue() {
-            serviceResolveQueue.remove();
+            serviceResolveQueue.remove()
             // Resolve next service from queue
             if (!serviceResolveQueue.isEmpty()) {
                 resolveService(serviceResolveQueue.peek())
