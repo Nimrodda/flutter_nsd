@@ -1,17 +1,26 @@
 import Cocoa
 import FlutterMacOS
 
-public class FlutterNsdPlugin: NSObject, FlutterPlugin {
+public class FlutterNsdPlugin: NSObject, FlutterPlugin, NetServiceBrowserDelegate, NetServiceDelegate {
+    private var netServiceBrowser: NetServiceBrowser!
+    private var services = [NetService]()
+    private var channel: FlutterMethodChannel
+    
+    init(channel: FlutterMethodChannel) {
+        self.channel = channel
+        self.services.removeAll()
+        netServiceBrowser = NetServiceBrowser()
+        super.init()
+    }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "com.nimroddayan/flutter_nsd", binaryMessenger: registrar.messenger)
-        let instance = FlutterNsdPlugin()
+        let instance = FlutterNsdPlugin(channel: channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
-        case "getPlatformVersion":
-            result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
         case "startDiscovery":
             let args = call.arguments as? [String: Any]
             guard let serviceType = args?["serviceType"] as? String else {
@@ -30,10 +39,53 @@ public class FlutterNsdPlugin: NSObject, FlutterPlugin {
     }
     
     private func startDiscovery(_ serviceType: String) {
-        NSLog("startDiscovery");
+        netServiceBrowser.delegate = self
+        netServiceBrowser.searchForServices(ofType: serviceType, inDomain: "")
     }
     
     private func stopDiscovery() {
-        NSLog("stopDiscovery");
+        netServiceBrowser.stop()
+    }
+    
+    private func updateInterface() {
+        for service in services {
+            if service.port == -1 {
+                service.delegate = self
+                service.resolve(withTimeout: 10)
+            }
+        }
+    }
+    
+    public func netServiceBrowser(_ browser: NetServiceBrowser, didNotSearch errorDict: [String : NSNumber]) {
+        channel.invokeMethod("onStartDiscoveryFailed", arguments: nil);
+    }
+    
+    public func netServiceBrowserDidStopSearch(_ browser: NetServiceBrowser) {
+        channel.invokeMethod("onDiscoveryStopped", arguments: nil);
+        netServiceBrowser.delegate = nil
+    }
+    
+    public func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
+        services.append(service)
+        if !moreComing {
+            self.updateInterface()
+        }
+    }
+    
+    public func netServiceDidResolveAddress(_ sender: NetService) {
+        var port: Int? = sender.port
+        if port == -1 {
+            port = nil
+        }
+        var txt: [String: FlutterStandardTypedData]? = nil;
+        if let txtRecordData = sender.txtRecordData() {
+            txt = NetService.dictionary(fromTXTRecord: txtRecordData).mapValues( { (value) -> FlutterStandardTypedData in
+                FlutterStandardTypedData(bytes: value)
+            })
+        }
+        
+        let arguments: [String: Any?] = ["hostname": sender.hostName, "port": port, "name": sender.name, "txt": txt];
+        
+        channel.invokeMethod("onServiceResolved", arguments: arguments)
     }
 }
