@@ -68,11 +68,23 @@ Android emulator doesn't support Network Service Discovery so you'll have to use
 This plugin uses `NetServiceBrowser` and can therefore support iOS version 9+.
 
 On iOS 14+, you need to modify `Info.plist` file and add two keys:
-`Bonjour Services` - this is an array, the first item should be the service you're trying to
+
+* `Bonjour Services` - this is an array, the first item should be the service you're trying to
 discover. For example, `_example._tcp.`.
-`Privacy - Local Network Usage Description` - this key is for granting the app local network access.
+* `Privacy - Local Network Usage Description` - this key is for granting the app local network access.
  The value is the text which will be shown to the user in a permission dialog once you call
  `flutterNsd.discoverServices()`.
+ 
+ Example:
+ 
+ ```xml
+<key>NSLocalNetworkUsageDescription</key>
+<string>Reasoning for the user why you need this permission goes here</string>
+<key>NSBonjourServices</key>
+<array>
+    <string>_example._tcp.</string>
+</array>
+```
 
 For more info about network discovery on iOS 14, I suggest you watch
 this [video](https://developer.apple.com/videos/play/wwdc2020/10110/).
