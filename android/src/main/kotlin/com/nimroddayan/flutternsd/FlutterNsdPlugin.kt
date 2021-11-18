@@ -177,6 +177,10 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onServiceLost(service: NsdServiceInfo) {
       Timber.v("Service lost $service")
+      val result = service.toMap()
+      mainHandler.post {
+        channel.invokeMethod("onServiceLost", result)
+      }
     }
 
     override fun onDiscoveryStopped(serviceType: String) {
@@ -214,18 +218,7 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
     }
 
     override fun onServiceResolved(serviceInfo: NsdServiceInfo?) {
-      val hostname = serviceInfo?.host?.canonicalHostName
-      val port = serviceInfo?.port
-      val name = serviceInfo?.serviceName
-      val txt = serviceInfo?.attributes
-
-      Timber.v("Resolved service: $name-$hostname:$port $txt")
-      val result = mapOf(
-        "hostname" to hostname,
-        "port" to port,
-        "name" to name,
-        "txt" to txt
-      )
+      val result = serviceInfo.toMap()
       mainHandler.post {
         channel.invokeMethod("onServiceResolved", result)
       }
@@ -241,4 +234,19 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
       }
     }
   }
+}
+
+private fun NsdServiceInfo?.toMap(): Map<String, Any?> {
+  val hostname = this?.host?.canonicalHostName
+  val port = this?.port
+  val name = this?.serviceName
+  val txt = this?.attributes
+
+  Timber.v("Resolved service: $name-$hostname:$port $txt")
+  return mapOf(
+    "hostname" to hostname,
+    "port" to port,
+    "name" to name,
+    "txt" to txt
+  )
 }

@@ -76,16 +76,26 @@ class FlutterNsd {
           _channel.setMethodCallHandler(null);
           break;
         case 'onServiceResolved':
-          final String hostname = call.arguments['hostname'];
-          final int port = call.arguments['port'];
-          final String name = call.arguments['name'];
-          final Map<String, Uint8List> txt = Map.from(call.arguments['txt']);
-          _streamController.add(NsdServiceInfo(hostname, port, name, txt));
+          final nsdServiceInfo = _parseArgs(call);
+          _streamController.add(nsdServiceInfo);
+          break;
+        case 'onServiceLost':
+          final nsdServiceInfo = _parseArgs(call);
+
           break;
         default:
           throw MissingPluginException();
       }
     });
+  }
+
+  NsdServiceInfo _parseArgs(MethodCall call) {
+    final String hostname = call.arguments['hostname'];
+    final int port = call.arguments['port'];
+    final String name = call.arguments['name'];
+    final Map<String, Uint8List> txt = Map.from(call.arguments['txt']);
+    var nsdServiceInfo = NsdServiceInfo(hostname, port, name, txt);
+    return nsdServiceInfo;
   }
 
   /// Stop network service discovery
