@@ -11,7 +11,7 @@ Add the dependency to pubspec.yaml:
 
 ```
 dependencies:
-  flutter_nsd: ^1.2.0
+  flutter_nsd: ^1.3.0
 ```
 
 ## Getting Started
