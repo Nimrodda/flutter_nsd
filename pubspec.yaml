@@ -23,3 +23,5 @@ flutter:
         pluginClass: FlutterNsdPlugin
       ios:
         pluginClass: SwiftFlutterNsdPlugin
+      macos:
+        pluginClass: SwiftFlutterNsdPlugin
