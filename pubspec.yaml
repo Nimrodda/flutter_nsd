@@ -23,3 +23,6 @@ flutter:
         pluginClass: FlutterNsdPlugin
       ios:
         pluginClass: SwiftFlutterNsdPlugin
+      windows:
+        fileName: flutter_nsd_plugin.cpp
+        pluginClass: FlutterNsdPlugin
