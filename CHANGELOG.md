@@ -1,3 +1,8 @@
+## 1.3.0
+
+* Added MacOS desktop support
+* Fixed #10: Make pubspec description valid
+
 ## 1.2.0
 
 * #6 Android: Fixed failure to resolve service sequentially (Thanks @julianscheel).
