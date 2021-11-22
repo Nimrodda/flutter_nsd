@@ -264,7 +264,7 @@ void FlutterNsdPlugin::HandleMethodCall(
     if (serviceType != arguments->end()) {
       type = std::get<std::string>(serviceType->second);
     }
-    
+
     if (currentRequest != NULL) {
       auto req = currentRequest;
       currentRequest = NULL; // request will delete itself after the thread exits, we can detach the pointer here
@@ -284,7 +284,7 @@ void FlutterNsdPlugin::HandleMethodCall(
     result->Success();
   }
   else {
-    result->Success();
+    result->NotImplemented();
   }
 }
 

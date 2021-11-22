@@ -1,0 +1,3 @@
+[submodule "windows/mdns"]
+	path = windows/mdns
+	url = https://github.com/mjansson/mdns
