@@ -74,9 +74,9 @@ discover. For example, `_example._tcp.`.
 * `Privacy - Local Network Usage Description` - this key is for granting the app local network access.
  The value is the text which will be shown to the user in a permission dialog once you call
  `flutterNsd.discoverServices()`.
- 
+
  Example:
- 
+
  ```xml
 <key>NSLocalNetworkUsageDescription</key>
 <string>Reasoning for the user why you need this permission goes here</string>
@@ -90,6 +90,15 @@ For more info about network discovery on iOS 14, I suggest you watch
 this [video](https://developer.apple.com/videos/play/wwdc2020/10110/).
 
 *Note that you don't need to worry about modifying `Info.plist` if you are just testing with a simulator.*
+
+## Note about Windows
+
+Windows does not have native support for MDNS, therefore it is implemented using the https://github.com/mjansson/mdns library
+which implements MDNS using sockets. The library will return separate results for ipv4 and ipv6.
+
+The current implementation will send MDNS multicast every 10 seconds until stopped.
+
+Due to the native socket calls, any app using this plugin on windows will trigger a dialog from Windows to allow network access on the first launch.
 
 ## License
 
