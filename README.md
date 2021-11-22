@@ -100,6 +100,8 @@ The current implementation will send MDNS multicast every 10 seconds until stopp
 
 Due to the native socket calls, any app using this plugin on windows will trigger a dialog from Windows to allow network access on the first launch.
 
+For Windows development you will need Visual Studio 2019 with the C++ workload installed, see https://docs.flutter.dev/desktop
+
 ## License
 
 Copyright 2021 Nimrod Dayan nimroddayan.com
