@@ -11,7 +11,7 @@
 #include <ifaddrs.h>
 #endif
 
-#include "mdns.h"
+#include "mdns/mdns.h"
 
 #include "mdns_impl.h"
 
