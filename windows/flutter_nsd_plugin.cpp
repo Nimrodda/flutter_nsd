@@ -73,6 +73,12 @@ namespace {
 
 
   void MdnsRequest::send(MdnsResult& packet) {
+    if (packet.hostname.empty()) {
+      packet.hostname = packet.ipv4address;
+    }
+    if (packet.hostname.empty()) {
+      packet.hostname = packet.ipv6address;
+    }
     channel->InvokeMethod("onServiceResolved",
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
                {flutter::EncodableValue("hostname"), flutter::EncodableValue(packet.hostname)},
