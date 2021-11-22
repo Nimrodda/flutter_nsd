@@ -70,7 +70,7 @@ class _MyAppState extends State<MyApp> {
       services.clear();
       _scanning = true;
     });
-    await flutterNsd.discoverServices('_example._tcp.');
+    await flutterNsd.discoverServices('_http._tcp.');
   }
 
   Future<void> stopDiscovery() async {
