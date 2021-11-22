@@ -1,6 +1,6 @@
 name: flutter_nsd
 description: Flutter Network Service Discovery plugin
-version: 1.2.0
+version: 1.4.0-alpha01
 homepage: https://github.com/Nimrodda/flutter_nsd
 
 environment:

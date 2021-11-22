@@ -1,3 +1,8 @@
+## 1.4.0-alpha01
+
+Add support for Windows using the https://github.com/mjansson/mdns library
+
+
 ## 1.3.0
 
 * Added MacOS desktop support
