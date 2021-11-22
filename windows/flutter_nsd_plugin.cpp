@@ -249,21 +249,7 @@ FlutterNsdPlugin::~FlutterNsdPlugin() {
 void FlutterNsdPlugin::HandleMethodCall(
   const flutter::MethodCall<flutter::EncodableValue>& method_call,
   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
-  if (method_call.method_name().compare("getPlatformVersion") == 0) {
-    std::ostringstream version_stream;
-    version_stream << "Windows ";
-    if (IsWindows10OrGreater()) {
-      version_stream << "10+";
-    }
-    else if (IsWindows8OrGreater()) {
-      version_stream << "8";
-    }
-    else if (IsWindows7OrGreater()) {
-      version_stream << "7";
-    }
-    result->Success(flutter::EncodableValue(version_stream.str()));
-  }
-  else if (method_call.method_name().compare("startDiscovery") == 0) {
+  if (method_call.method_name().compare("startDiscovery") == 0) {
     const auto* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto serviceType = arguments->find(flutter::EncodableValue("serviceType"));
     std::string type = "";
