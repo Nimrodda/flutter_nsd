@@ -11,7 +11,7 @@
 #include <ifaddrs.h>
 #endif
 
-#include "mdns/mdns.h"
+#include "mdns.h"
 
 #include "mdns_impl.h"
 
@@ -124,7 +124,7 @@ query_callback(int sock, const struct sockaddr* from, size_t addrlen, mdns_entry
     printf("%.*s : %s %.*s PTR %.*s rclass 0x%x ttl %u length %d\n",
       MDNS_STRING_FORMAT(fromaddrstr), entrytype, MDNS_STRING_FORMAT(entrystr),
       MDNS_STRING_FORMAT(namestr), rclass, ttl, (int)record_length);
-    call_HandlePTRRecord(plugin, data, last, 
+    call_HandlePTRRecord(plugin, data, last,
       MDNS_STRING_ARGS(entrystr), MDNS_STRING_ARGS(namestr));
   }
   else if (rtype == MDNS_RECORDTYPE_SRV) {
@@ -146,7 +146,7 @@ query_callback(int sock, const struct sockaddr* from, size_t addrlen, mdns_entry
       ipv4_address_to_string(namebuffer, sizeof(namebuffer), &addr, sizeof(addr));
     printf("%.*s : %s %.*s A %.*s\n", MDNS_STRING_FORMAT(fromaddrstr), entrytype,
       MDNS_STRING_FORMAT(entrystr), MDNS_STRING_FORMAT(addrstr));
-    call_HandleARecord(plugin, data, last, 
+    call_HandleARecord(plugin, data, last,
       MDNS_STRING_ARGS(entrystr), MDNS_STRING_ARGS(addrstr));
   }
   else if (rtype == MDNS_RECORDTYPE_AAAA) {
@@ -156,7 +156,7 @@ query_callback(int sock, const struct sockaddr* from, size_t addrlen, mdns_entry
       ipv6_address_to_string(namebuffer, sizeof(namebuffer), &addr, sizeof(addr));
     printf("%.*s : %s %.*s AAAA %.*s\n", MDNS_STRING_FORMAT(fromaddrstr), entrytype,
       MDNS_STRING_FORMAT(entrystr), MDNS_STRING_FORMAT(addrstr));
-    call_HandleAAAARecord(plugin, data, last, 
+    call_HandleAAAARecord(plugin, data, last,
       MDNS_STRING_ARGS(entrystr), MDNS_STRING_ARGS(addrstr));
   }
   else if (rtype == MDNS_RECORDTYPE_TXT) {
@@ -454,7 +454,7 @@ send_mdns_query(const char* service, int record, const void *plugin) {
 
   size_t capacity = 2048;
   void* buffer = malloc(capacity);
- 
+
   size_t records;
 
   const char* record_name = "PTR";
