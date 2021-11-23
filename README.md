@@ -1,6 +1,6 @@
 # Flutter Network Service Discovery plugin
 
-Flutter plugin that provides Network Service Discovery (NSD) API on iOS and Android
+Flutter plugin that provides Network Service Discovery (NSD) API on iOS, Android, MacOS and Windows
 for discovering services that other devices provide on a local network.
 
 The plugin currently only supports discovery, but not registry of services.
@@ -101,6 +101,16 @@ The current implementation will send MDNS multicast every 10 seconds until stopp
 Due to the native socket calls, any app using this plugin on windows will trigger a dialog from Windows to allow network access on the first launch.
 
 For Windows development you will need Visual Studio 2019 with the C++ workload installed, see https://docs.flutter.dev/desktop#additional-windows-requirements
+
+## Testing
+
+On MacOS it's easy to test network service discovery via the following command which will create a mock service:
+
+```
+dns-sd -R MyJsonServer1 _example._tcp . 3000 foo=bar
+```
+
+Then scan for this service using the example app on any of the supported platforms.
 
 ## License
 
