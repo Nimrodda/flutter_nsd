@@ -1,7 +1,11 @@
+
+
+
 ## 1.3.0
 
 * Added MacOS desktop support
 * Fixed #10: Make pubspec description valid
+* Add support for Windows using the https://github.com/mjansson/mdns library
 
 ## 1.2.0
 
