@@ -2,13 +2,13 @@
 #include <stdio.h>
 
 
-#ifdef _WIN32
+
 #include <winsock2.h>
 #include <iphlpapi.h>
 #define sleep(x) Sleep(x * 1000)
-#else
-#include <netdb.h>
-#include <ifaddrs.h>
+
+#if (_DEBUG == 0)
+#define printf
 #endif
 
 #include "mdns.h"
@@ -197,8 +197,6 @@ open_client_sockets(int* sockets, int max_sockets, int port) {
   // Thus we need to open one socket for each interface and address family
   int num_sockets = 0;
 
-#ifdef _WIN32
-
   IP_ADAPTER_ADDRESSES* adapter_address = 0;
   ULONG address_size = 8000;
   unsigned int ret;
@@ -305,88 +303,6 @@ open_client_sockets(int* sockets, int max_sockets, int port) {
 
   free(adapter_address);
 
-#else
-
-  struct ifaddrs* ifaddr = 0;
-  struct ifaddrs* ifa = 0;
-
-  if (getifaddrs(&ifaddr) < 0)
-    printf("Unable to get interface addresses\n");
-
-  int first_ipv4 = 1;
-  int first_ipv6 = 1;
-  for (ifa = ifaddr; ifa; ifa = ifa->ifa_next) {
-    if (!ifa->ifa_addr)
-      continue;
-
-    if (ifa->ifa_addr->sa_family == AF_INET) {
-      struct sockaddr_in* saddr = (struct sockaddr_in*)ifa->ifa_addr;
-      if (saddr->sin_addr.s_addr != htonl(INADDR_LOOPBACK)) {
-        int log_addr = 0;
-        if (first_ipv4) {
-          service_address_ipv4 = *saddr;
-          first_ipv4 = 0;
-          log_addr = 1;
-        }
-        has_ipv4 = 1;
-        if (num_sockets < max_sockets) {
-          saddr->sin_port = htons(port);
-          int sock = mdns_socket_open_ipv4(saddr);
-          if (sock >= 0) {
-            sockets[num_sockets++] = sock;
-            log_addr = 1;
-          }
-          else {
-            log_addr = 0;
-          }
-        }
-        if (log_addr) {
-          char buffer[128];
-          mdns_string_t addr = ipv4_address_to_string(buffer, sizeof(buffer), saddr,
-            sizeof(struct sockaddr_in));
-          printf("Local IPv4 address: %.*s\n", MDNS_STRING_FORMAT(addr));
-        }
-      }
-    }
-    else if (ifa->ifa_addr->sa_family == AF_INET6) {
-      struct sockaddr_in6* saddr = (struct sockaddr_in6*)ifa->ifa_addr;
-      static const unsigned char localhost[] = { 0, 0, 0, 0, 0, 0, 0, 0,
-                                                0, 0, 0, 0, 0, 0, 0, 1 };
-      static const unsigned char localhost_mapped[] = { 0, 0, 0,    0,    0,    0, 0, 0,
-                                                       0, 0, 0xff, 0xff, 0x7f, 0, 0, 1 };
-      if (memcmp(saddr->sin6_addr.s6_addr, localhost, 16) &&
-        memcmp(saddr->sin6_addr.s6_addr, localhost_mapped, 16)) {
-        int log_addr = 0;
-        if (first_ipv6) {
-          service_address_ipv6 = *saddr;
-          first_ipv6 = 0;
-          log_addr = 1;
-        }
-        has_ipv6 = 1;
-        if (num_sockets < max_sockets) {
-          saddr->sin6_port = htons(port);
-          int sock = mdns_socket_open_ipv6(saddr);
-          if (sock >= 0) {
-            sockets[num_sockets++] = sock;
-            log_addr = 1;
-          }
-          else {
-            log_addr = 0;
-          }
-        }
-        if (log_addr) {
-          char buffer[128];
-          mdns_string_t addr = ipv6_address_to_string(buffer, sizeof(buffer), saddr,
-            sizeof(struct sockaddr_in6));
-          printf("Local IPv6 address: %.*s\n", MDNS_STRING_FORMAT(addr));
-        }
-      }
-    }
-  }
-
-  freeifaddrs(ifaddr);
-
-#endif
 
   return num_sockets;
 }
