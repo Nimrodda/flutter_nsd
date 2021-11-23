@@ -1,6 +1,6 @@
 # Flutter Network Service Discovery plugin
 
-Flutter plugin that provides Network Service Discovery (NSD) API on iOS and Android
+Flutter plugin that provides Network Service Discovery (NSD) API on iOS, Android, MacOS and Windows
 for discovering services that other devices provide on a local network.
 
 The plugin currently only supports discovery, but not registry of services.
