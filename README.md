@@ -102,6 +102,16 @@ Due to the native socket calls, any app using this plugin on windows will trigge
 
 For Windows development you will need Visual Studio 2019 with the C++ workload installed, see https://docs.flutter.dev/desktop#additional-windows-requirements
 
+## Testing
+
+On MacOS it's easy to test network service discovery via the following command which will create a mock service:
+
+```
+dns-sd -R MyJsonServer1 _example._tcp . 3000 foo=bar
+```
+
+Then scan for this service using the example app on any of the supported platforms.
+
 ## License
 
 Copyright 2021 Nimrod Dayan nimroddayan.com
