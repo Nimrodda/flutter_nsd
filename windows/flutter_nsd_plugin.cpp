@@ -81,7 +81,7 @@ namespace {
     }
     channel->InvokeMethod("onServiceResolved",
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
-               {flutter::EncodableValue("hostname"), flutter::EncodableValue(packet.hostname)},
+               {flutter::EncodableValue("hostname"), flutter::EncodableValue(packet.ipv4address)},
                {flutter::EncodableValue("ipv4address"), flutter::EncodableValue(packet.ipv4address)},
                {flutter::EncodableValue("ipv6address"), flutter::EncodableValue(packet.ipv6address)},
                {flutter::EncodableValue("port"), flutter::EncodableValue(packet.port)},
