@@ -20,6 +20,9 @@
 
 #include "mdns_impl.h"
 
+#if (_DEBUG == 0)
+#define printf
+#endif
 
 
 namespace {
@@ -76,12 +79,20 @@ namespace {
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv4address;
     }
+    else {
+      struct hostent* ent = gethostbyname(packet.hostname.c_str());
+      if (ent == NULL) {
+        printf("cannot resolve hostname %s, returning IP address %s", packet.hostname, packet.ipv4address);
+        packet.hostname = packet.ipv4address;
+      }
+    }
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv6address;
     }
     channel->InvokeMethod("onServiceResolved",
+
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
-               {flutter::EncodableValue("hostname"), flutter::EncodableValue(packet.ipv4address)},
+               {flutter::EncodableValue("hostname"), flutter::EncodableValue(packet.hostname)},
                {flutter::EncodableValue("ipv4address"), flutter::EncodableValue(packet.ipv4address)},
                {flutter::EncodableValue("ipv6address"), flutter::EncodableValue(packet.ipv6address)},
                {flutter::EncodableValue("port"), flutter::EncodableValue(packet.port)},
@@ -201,6 +212,7 @@ class FlutterNsdPlugin : public flutter::Plugin {
       const flutter::MethodCall<flutter::EncodableValue> &method_call,
       std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
   std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel;
+  boolean wsaInitialized = false;
 
   MdnsRequest* currentRequest;
 
@@ -238,6 +250,9 @@ FlutterNsdPlugin::FlutterNsdPlugin(std::shared_ptr<flutter::MethodChannel<flutte
 
     printf("Failed to initialize WinSock\n");
   }
+  else {
+    wsaInitialized = true;
+  }
 }
 
 FlutterNsdPlugin::~FlutterNsdPlugin() {
@@ -250,21 +265,26 @@ void FlutterNsdPlugin::HandleMethodCall(
   const flutter::MethodCall<flutter::EncodableValue>& method_call,
   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare("startDiscovery") == 0) {
-    const auto* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
-    auto serviceType = arguments->find(flutter::EncodableValue("serviceType"));
-    std::string type = "";
-    if (serviceType != arguments->end()) {
-      type = std::get<std::string>(serviceType->second);
+    if (!wsaInitialized) {
+      result->Error("WSAError");
     }
+    else {
+      const auto* arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+      auto serviceType = arguments->find(flutter::EncodableValue("serviceType"));
+      std::string type = "";
+      if (serviceType != arguments->end()) {
+        type = std::get<std::string>(serviceType->second);
+      }
 
-    if (currentRequest != NULL) {
-      auto req = currentRequest;
-      currentRequest = NULL; // request will delete itself after the thread exits, we can detach the pointer here
-      req->stop(); // will stop the background thread after the next timeout; returns immediately
+      if (currentRequest != NULL) {
+        auto req = currentRequest;
+        currentRequest = NULL; // request will delete itself after the thread exits, we can detach the pointer here
+        req->stop(); // will stop the background thread after the next timeout; returns immediately
+      }
+      currentRequest = new MdnsRequest(channel);
+      currentRequest->start(type);
+      result->Success();
     }
-    currentRequest = new MdnsRequest(channel);
-    currentRequest->start(type);
-    result->Success();
   }
   else if (method_call.method_name().compare("stopDiscovery") == 0) {
     if (currentRequest != NULL) {
