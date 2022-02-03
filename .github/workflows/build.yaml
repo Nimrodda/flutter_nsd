@@ -14,8 +14,11 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
-      - run: flutter build windows
-        working-directory: example
+      - run: |
+          cd example/
+          flutter config --enable-windows-desktop
+          flutter build windows
+        # working-directory: example
   android-build:
     runs-on: ubuntu-latest
     steps:
@@ -33,6 +36,11 @@ jobs:
         working-directory: example
       - run: flutter build apk
         working-directory: example
+      - uses: actions/upload-artifact@v2
+        with:
+          name: android-build
+          path: |
+            example/build/app/outputs/flutter-apk/app-release.apk
   ios-build:
     runs-on: macos-latest
     steps:
@@ -46,6 +54,11 @@ jobs:
         working-directory: example
       - run: flutter build ios --release --no-codesign
         working-directory: example
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ios-build
+          path: |
+            example/build/ios/iphoneos/Runner.app.
   macos-build:
     runs-on: macos-latest
     steps:
