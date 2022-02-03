@@ -14,8 +14,8 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
-      - run: flutter config --enable-windows-desktop
       - run: flutter build windows
+        working-directory: example
   android-build:
     runs-on: ubuntu-latest
     steps:
@@ -30,7 +30,9 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
       - run: flutter pub get
+        working-directory: example
       - run: flutter build apk
+        working-directory: example
   ios-build:
     runs-on: macos-latest
     steps:
@@ -41,7 +43,9 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
       - run: flutter pub get
+        working-directory: example
       - run: flutter build ios --release --no-codesign
+        working-directory: example
   macos-build:
     runs-on: macos-latest
     steps:
@@ -52,4 +56,6 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: ${{ env.FLUTTER_CHANNEL }}
       - run: flutter config --enable-macos-desktop
+        working-directory: example
       - run: flutter build macos
+        working-directory: example
