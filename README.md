@@ -1,3 +1,5 @@
+[![flutter_nsd](https://github.com/Nimrodda/flutter_nsd/actions/workflows/build.yaml/badge.svg)](https://github.com/Nimrodda/flutter_nsd/actions/workflows/build.yaml)
+
 # Flutter Network Service Discovery plugin
 
 Flutter plugin that provides Network Service Discovery (NSD) API on iOS, Android, MacOS and Windows
