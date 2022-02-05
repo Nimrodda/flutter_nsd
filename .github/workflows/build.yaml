@@ -18,11 +18,13 @@ jobs:
           cd example/
           flutter config --enable-windows-desktop
           flutter build windows
-
+        # working-directory: example
       - uses: actions/upload-artifact@v2
-          with:
-            name: windows-build
-            path: example/build/windows/runner/Release/
+        with:
+          name: windows-build
+          path: |
+            example/build/windows/runner/Release/
+  android-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
