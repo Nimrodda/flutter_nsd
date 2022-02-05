@@ -77,3 +77,9 @@ jobs:
         working-directory: example
       - run: flutter build macos
         working-directory: example
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows-build
+          path: |
+            example/build/macos/Build/Products/Release/
+            
