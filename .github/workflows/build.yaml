@@ -58,7 +58,7 @@ jobs:
         with:
           name: ios-build
           path: |
-            example/build/ios/iphoneos/Runner.app.
+            example/build/ios/iphoneos/Runner.app
   macos-build:
     runs-on: macos-latest
     steps:
