@@ -61,6 +61,7 @@ namespace {
     volatile boolean keepRunning;
     std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel;
     std::map<const void*, MdnsResult> packets;
+    std::set<std::string> sent_results;
 
   };
 
@@ -73,6 +74,11 @@ namespace {
 
 
   void MdnsRequest::send(MdnsResult& packet) {
+    auto digest = packet.name + packet.dnsname + packet.hostname + packet.ipv4address + packet.ipv6address + std::to_string(packet.port);
+    if (sent_results.find(digest) != sent_results.end()) {
+      return;
+    }
+    sent_results.insert(digest);
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv4address;
     }
@@ -97,7 +103,7 @@ namespace {
     if (last) {
       auto packet = packets[base];
       send(packet);
-      packets.erase(base);
+//      packets.erase(base);
     }
   }
 
