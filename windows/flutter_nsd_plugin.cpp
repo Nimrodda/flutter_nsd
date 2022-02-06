@@ -169,7 +169,7 @@ namespace {
 
   void MdnsRequest::runner(std::string serviceName) {
     while (keepRunning) {
-      DWORD result = mdns_query(this, (serviceName + "local.").c_str());
+      DWORD result = mdns_query(this, (serviceName + "local").c_str());
       for (auto it = packets.begin(); it != packets.end(); it++) {
         send(it->second);
       }
