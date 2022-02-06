@@ -81,5 +81,5 @@ jobs:
         with:
           name: windows-build
           path: |
-            example/build/macos/Build/Products/Release/ #macos
+            example/build/macos/Build/Products/Release/flutter_nsd_example.app
             
