@@ -43,7 +43,7 @@ just a generic error, but in the future, it will be more specific).
 
 ```dart
 void startDiscoveryButton() async {
-  await flutterNsd.discoverServices('_example._tcp.');
+  await flutterNsd.discoverServices('_http._tcp.');
 }
 ```
 
@@ -72,7 +72,7 @@ This plugin uses `NetServiceBrowser` and can therefore support iOS version 9+.
 On iOS 14+, you need to modify `Info.plist` file and add two keys:
 
 * `Bonjour Services` - this is an array, the first item should be the service you're trying to
-discover. For example, `_example._tcp.`.
+discover. For example, `_http._tcp.`.
 * `Privacy - Local Network Usage Description` - this key is for granting the app local network access.
  The value is the text which will be shown to the user in a permission dialog once you call
  `flutterNsd.discoverServices()`.
@@ -84,7 +84,7 @@ discover. For example, `_example._tcp.`.
 <string>Reasoning for the user why you need this permission goes here</string>
 <key>NSBonjourServices</key>
 <array>
-    <string>_example._tcp.</string>
+    <string>_http._tcp.</string>
 </array>
 ```
 
@@ -109,7 +109,7 @@ For Windows development you will need Visual Studio 2019 with the C++ workload i
 On MacOS it's easy to test network service discovery via the following command which will create a mock service:
 
 ```
-dns-sd -R MyJsonServer1 _example._tcp . 3000 foo=bar
+dns-sd -R MyJsonServer1 _http._tcp . 3000 foo=bar
 ```
 
 Then scan for this service using the example app on any of the supported platforms.
