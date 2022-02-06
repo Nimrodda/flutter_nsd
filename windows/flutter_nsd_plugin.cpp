@@ -103,7 +103,7 @@ namespace {
     if (last) {
       auto packet = packets[base];
       send(packet);
-//      packets.erase(base);
+      packets.erase(base);
     }
   }
 
