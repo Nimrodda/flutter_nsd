@@ -1,0 +1,28 @@
+name: flutter_nsd
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+    branches: [master]
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: kuhnroyal/flutter-fvm-config-action@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+      - run: |
+          cd example/
+          flutter config --enable-windows-desktop
+          flutter build windows
+        # working-directory: example
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows-build
+          path: |
+            example/build/windows/runner/Release/
