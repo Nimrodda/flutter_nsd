@@ -1,5 +1,5 @@
 name: flutter_nsd
-description: A Flutter plugin for Network Service Discovery (mDNS) on Android, iOS, MacOS and Windows. The plugin uses the platform's own API when possible. Supports discovery only, no registry.
+description: A Flutter plugin for Network Service Discovery (mDNS) that uses platform API on Android, iOS, MacOS and Windows.
 version: 1.3.0
 homepage: https://github.com/Nimrodda/flutter_nsd
 
