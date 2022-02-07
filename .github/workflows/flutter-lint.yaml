@@ -1,4 +1,4 @@
-name: flutter_nsd
+name: Analyze
 
 on:
   workflow_dispatch:
