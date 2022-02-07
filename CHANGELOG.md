@@ -1,5 +1,7 @@
+## 1.3.1
 
-
+* Fixed #27: Address pub.dev static analysis
+* Fixed various lint errors
 
 ## 1.3.0
 
