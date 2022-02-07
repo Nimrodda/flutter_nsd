@@ -64,6 +64,7 @@ namespace {
     volatile boolean keepRunning;
     std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel;
     std::map<const void*, MdnsResult> packets;
+    std::set<std::string> sent_results;
 
   };
 
@@ -76,6 +77,11 @@ namespace {
 
 
   void MdnsRequest::send(MdnsResult& packet) {
+    auto digest = packet.name + packet.dnsname + packet.hostname + packet.ipv4address + packet.ipv6address + std::to_string(packet.port);
+    if (sent_results.find(digest) != sent_results.end()) {
+      return;
+    }
+    sent_results.insert(digest);
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv4address;
     }
@@ -89,6 +95,14 @@ namespace {
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv6address;
     }
+    std::string name = packet.name;
+    if (!packet.servicename.empty()) {
+      size_t pos = name.rfind("." + packet.servicename);
+      if (pos > 0) {
+        name = name.substr(0, pos);
+      }
+
+    } 
     channel->InvokeMethod("onServiceResolved",
 
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
@@ -96,7 +110,7 @@ namespace {
                {flutter::EncodableValue("ipv4address"), flutter::EncodableValue(packet.ipv4address)},
                {flutter::EncodableValue("ipv6address"), flutter::EncodableValue(packet.ipv6address)},
                {flutter::EncodableValue("port"), flutter::EncodableValue(packet.port)},
-               {flutter::EncodableValue("name"), flutter::EncodableValue(packet.name)},
+               {flutter::EncodableValue("name"), flutter::EncodableValue(name)},
                {flutter::EncodableValue("txt"), flutter::EncodableValue(packet.txt)}
         }
       ))
@@ -169,7 +183,7 @@ namespace {
 
   void MdnsRequest::runner(std::string serviceName) {
     while (keepRunning) {
-      DWORD result = mdns_query(this, (serviceName + "local.").c_str());
+      DWORD result = mdns_query(this, (serviceName + "local").c_str());
       for (auto it = packets.begin(); it != packets.end(); it++) {
         send(it->second);
       }

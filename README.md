@@ -2,8 +2,7 @@
 
 # Flutter Network Service Discovery plugin
 
-Flutter plugin that provides Network Service Discovery (NSD) API on iOS, Android, MacOS and Windows
-for discovering services that other devices provide on a local network.
+A Flutter plugin for Network Service Discovery (mDNS) on Android, iOS, MacOS and Windows. The plugin uses the platform's own API when possible.
 
 The plugin currently only supports discovery, but not registry of services.
 
@@ -43,7 +42,7 @@ just a generic error, but in the future, it will be more specific).
 
 ```dart
 void startDiscoveryButton() async {
-  await flutterNsd.discoverServices('_example._tcp.');
+  await flutterNsd.discoverServices('_http._tcp.');
 }
 ```
 
@@ -72,7 +71,7 @@ This plugin uses `NetServiceBrowser` and can therefore support iOS version 9+.
 On iOS 14+, you need to modify `Info.plist` file and add two keys:
 
 * `Bonjour Services` - this is an array, the first item should be the service you're trying to
-discover. For example, `_example._tcp.`.
+discover. For example, `_http._tcp.`.
 * `Privacy - Local Network Usage Description` - this key is for granting the app local network access.
  The value is the text which will be shown to the user in a permission dialog once you call
  `flutterNsd.discoverServices()`.
@@ -84,7 +83,7 @@ discover. For example, `_example._tcp.`.
 <string>Reasoning for the user why you need this permission goes here</string>
 <key>NSBonjourServices</key>
 <array>
-    <string>_example._tcp.</string>
+    <string>_http._tcp.</string>
 </array>
 ```
 
@@ -102,21 +101,21 @@ The current implementation will send MDNS multicast every 10 seconds until stopp
 
 Due to the native socket calls, any app using this plugin on windows will trigger a dialog from Windows to allow network access on the first launch.
 
-For Windows development you will need Visual Studio 2019 with the C++ workload installed, see https://docs.flutter.dev/desktop#additional-windows-requirements
+For Windows development you will need Visual Studio 2019 or higher with the C++ workload installed, see https://docs.flutter.dev/desktop#additional-windows-requirements
 
 ## Testing
 
 On MacOS it's easy to test network service discovery via the following command which will create a mock service:
 
 ```
-dns-sd -R MyJsonServer1 _example._tcp . 3000 foo=bar
+dns-sd -R TestService _http._tcp . 3000
 ```
 
 Then scan for this service using the example app on any of the supported platforms.
 
 ## License
 
-Copyright 2021 Nimrod Dayan nimroddayan.com
+Copyright 2022 Nimrod Dayan nimroddayan.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
