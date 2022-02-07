@@ -27,8 +27,7 @@ import 'package:flutter/services.dart';
 /// Stop discovery by calling [stopDiscovery] when you're done.
 ///
 class FlutterNsd {
-  static const MethodChannel _channel =
-      const MethodChannel('com.nimroddayan/flutter_nsd');
+  static const MethodChannel _channel = MethodChannel('com.nimroddayan/flutter_nsd');
   static final FlutterNsd _instance = FlutterNsd._internal();
 
   final _streamController = StreamController<NsdServiceInfo>();
@@ -40,7 +39,7 @@ class FlutterNsd {
   }
 
   FlutterNsd._internal() {
-    this._stream = _streamController.stream.asBroadcastStream();
+    _stream = _streamController.stream.asBroadcastStream();
   }
 
   /// Stream that emits a [NsdServiceInfo] for each service discovered or a [NsdError] in case of an error.
@@ -49,8 +48,7 @@ class FlutterNsd {
   /// Start network service discovery for [serviceType] for an infinite amount
   /// of time (or until the app process is killed). Make sure to call [stopDiscovery] when you're done.
   Future<void> discoverServices(String serviceType) async {
-    await _channel
-        .invokeMethod('startDiscovery', {'serviceType': '$serviceType'});
+    await _channel.invokeMethod('startDiscovery', {'serviceType': serviceType});
 
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {

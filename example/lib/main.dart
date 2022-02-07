@@ -21,10 +21,12 @@ import 'dart:async';
 import 'package:flutter_nsd/flutter_nsd.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   State createState() => _MyAppState();
 }
@@ -37,6 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   _MyAppState();
 
+  @override
   void initState() {
     super.initState();
 
@@ -96,11 +99,11 @@ class _MyAppState extends State<MyApp> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 ElevatedButton(
-                  child: Text('Start'),
+                  child: const Text('Start'),
                   onPressed: () async => startDiscovery(),
                 ),
                 ElevatedButton(
-                  child: Text('Stop'),
+                  child: const Text('Stop'),
                   onPressed: () async => stopDiscovery(),
                 ),
               ],
@@ -116,11 +119,11 @@ class _MyAppState extends State<MyApp> {
 
   Widget _buildMainWidget(BuildContext context) {
     if (services.isEmpty && _scanning) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     } else if (services.isEmpty && !_scanning) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     } else {
       return ListView.builder(
         itemBuilder: (context, index) => ListTile(
