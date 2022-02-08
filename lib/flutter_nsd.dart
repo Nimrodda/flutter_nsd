@@ -27,7 +27,8 @@ import 'package:flutter/services.dart';
 /// Stop discovery by calling [stopDiscovery] when you're done.
 ///
 class FlutterNsd {
-  static const MethodChannel _channel = MethodChannel('com.nimroddayan/flutter_nsd');
+  static const MethodChannel _channel =
+      MethodChannel('com.nimroddayan/flutter_nsd');
   static final FlutterNsd _instance = FlutterNsd._internal();
 
   final _streamController = StreamController<NsdServiceInfo>();
