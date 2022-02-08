@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Nimrod Dayan nimroddayan.com
+ * Copyright 2022 Nimrod Dayan nimroddayan.com
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,8 +31,10 @@ class FlutterNsd {
       MethodChannel('com.nimroddayan/flutter_nsd');
   static final FlutterNsd _instance = FlutterNsd._internal();
 
-  final _streamController = StreamController<NsdServiceInfo>();
-  late Stream<NsdServiceInfo> _stream;
+  final _discoveredStreamController = StreamController<NsdServiceInfo>();
+  late Stream<NsdServiceInfo> _discoveredStream;
+  final _lostStreamController = StreamController<NsdServiceInfo>();
+  late Stream<NsdServiceInfo> _lostStream;
 
   /// Factory for getting [FlutterNsd] singleton object
   factory FlutterNsd() {
@@ -40,11 +42,19 @@ class FlutterNsd {
   }
 
   FlutterNsd._internal() {
-    _stream = _streamController.stream.asBroadcastStream();
+    _discoveredStream = _discoveredStreamController.stream.asBroadcastStream();
+    _lostStream = _lostStreamController.stream.asBroadcastStream();
   }
 
   /// Stream that emits a [NsdServiceInfo] for each service discovered or a [NsdError] in case of an error.
-  Stream<NsdServiceInfo> get stream => _stream;
+  @Deprecated("Use [discoveredServicesStream]")
+  Stream<NsdServiceInfo> get stream => _discoveredStream;
+
+  /// Stream that emits a [NsdServiceInfo] for each service discovered or a [NsdError] in case of an error.
+  Stream<NsdServiceInfo> get discoveredServicesStream => _discoveredStream;
+
+  /// Stream that emits a [NsdServiceInfo] for each service lost.
+  Stream<NsdServiceInfo> get lostServicesStream => _lostStream;
 
   /// Start network service discovery for [serviceType] for an infinite amount
   /// of time (or until the app process is killed). Make sure to call [stopDiscovery] when you're done.
@@ -54,32 +64,33 @@ class FlutterNsd {
     _channel.setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
         case 'onStartDiscoveryFailed':
-          _streamController.addError(NsdError(
+          _discoveredStreamController.addError(NsdError(
             errorCode: NsdErrorCode.startDiscoveryFailed,
           ));
           break;
         case 'onStopDiscoveryFailed':
-          _streamController.addError(NsdError(
+          _discoveredStreamController.addError(NsdError(
             errorCode: NsdErrorCode.stopDiscoveryFailed,
           ));
           break;
         case 'onResolveFailed':
-          _streamController.addError(NsdError(
+          _discoveredStreamController.addError(NsdError(
             errorCode: NsdErrorCode.onResolveFailed,
           ));
           break;
         case 'onDiscoveryStopped':
-          _streamController.addError(NsdError(
+          _discoveredStreamController.addError(NsdError(
             errorCode: NsdErrorCode.discoveryStopped,
           ));
           _channel.setMethodCallHandler(null);
           break;
         case 'onServiceResolved':
           final nsdServiceInfo = _parseArgs(call);
-          _streamController.add(nsdServiceInfo);
+          _discoveredStreamController.add(nsdServiceInfo);
           break;
         case 'onServiceLost':
-        // TODO issue #28
+          final nsdServiceInfo = _parseArgs(call);
+          _lostStreamController.add(nsdServiceInfo);
           break;
         default:
           throw MissingPluginException();
