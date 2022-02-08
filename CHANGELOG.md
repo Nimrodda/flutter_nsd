@@ -1,4 +1,14 @@
+## 1.3.2
+
+This release is identical in functionality to the previous one. It only fixes pub.dev analysis
+errors.
+
+* Fixed: pub.dev analsis error
+
 ## 1.3.1
+
+This release is identical in functionality to the previous one. It only fixes pub.dev analysis
+errors.
 
 * Fixed #27: Address pub.dev static analysis
 * Fixed various lint errors
