@@ -1,5 +1,3 @@
-[![flutter_nsd](https://github.com/Nimrodda/flutter_nsd/actions/workflows/build.yaml/badge.svg)](https://github.com/Nimrodda/flutter_nsd/actions/workflows/build.yaml)
-
 # Flutter Network Service Discovery plugin
 
 A Flutter plugin for Network Service Discovery (mDNS) on Android, iOS, MacOS and Windows. The plugin uses the platform's own API when possible.
