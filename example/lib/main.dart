@@ -33,7 +33,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final flutterNsd = FlutterNsd();
-  final services = <NsdServiceInfo>[];
+  final services = <NsdServiceInfo>{};
   bool initialStart = true;
   bool _scanning = false;
 
@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
 
     // Try one restart if initial start fails, which happens on hot-restart of
     // the flutter app.
-    flutterNsd.stream.listen(
+    flutterNsd.discoveredServicesStream.listen(
       (NsdServiceInfo service) {
         setState(() {
           services.add(service);
@@ -64,6 +64,11 @@ class _MyAppState extends State<MyApp> {
         }
       },
     );
+    flutterNsd.lostServicesStream.listen((NsdServiceInfo service) {
+      setState(() {
+        services.remove(service);
+      });
+    });
   }
 
   Future<void> startDiscovery() async {
@@ -127,7 +132,7 @@ class _MyAppState extends State<MyApp> {
     } else {
       return ListView.builder(
         itemBuilder: (context, index) => ListTile(
-          title: Text(services[index].name ?? 'Invalid service name'),
+          title: Text(services.elementAt(index).name ?? 'Invalid service name'),
         ),
         itemCount: services.length,
       );
