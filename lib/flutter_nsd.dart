@@ -22,8 +22,9 @@ import 'package:flutter/services.dart';
 
 /// Singleton API for managing Network Service Discovery
 ///
-/// Get the singleton by calling FlutterNsd() and listen to its [stream] for [NsdServiceInfo] emissions.
-/// Then invoke [discoverServices] to start service discovery.
+/// Get the singleton by calling FlutterNsd(). Listen to [discoveredServicesStream] for [NsdServiceInfo] emissions of
+/// discovered services and optionally also listen to [lostServicesStream] for [NsdServiceInfo] emissions of lost
+/// services. Then invoke [discoverServices] to start service discovery.
 /// Stop discovery by calling [stopDiscovery] when you're done.
 ///
 class FlutterNsd {
