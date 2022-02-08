@@ -41,6 +41,14 @@ namespace {
     std::map<flutter::EncodableValue, flutter::EncodableValue> txt;
   };
 
+  class MdnsSentResult {
+  public:
+    std::chrono::steady_clock::time_point lastSeen;
+    std::string name;
+    std::string hostname;
+    int port;
+  };
+
   class MdnsRequest {
 
   public:
@@ -64,7 +72,7 @@ namespace {
     volatile boolean keepRunning;
     std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel;
     std::map<const void*, MdnsResult> packets;
-    std::set<std::string> sent_results;
+    std::map<std::string, MdnsSentResult> sent_results;
 
   };
 
@@ -78,10 +86,15 @@ namespace {
 
   void MdnsRequest::send(MdnsResult& packet) {
     auto digest = packet.name + packet.dnsname + packet.hostname + packet.ipv4address + packet.ipv6address + std::to_string(packet.port);
+    auto time = std::chrono::steady_clock::now();
+
+
     if (sent_results.find(digest) != sent_results.end()) {
+      sent_results[digest].lastSeen = time;
       return;
     }
-    sent_results.insert(digest);
+
+
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv4address;
     }
@@ -102,7 +115,15 @@ namespace {
         name = name.substr(0, pos);
       }
 
-    } 
+    }
+    MdnsSentResult result;
+    result.name = name;
+    result.hostname = packet.hostname;
+    result.port = packet.port;
+    result.lastSeen = time;
+    sent_results[digest] = result;
+
+
     channel->InvokeMethod("onServiceResolved",
 
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
@@ -188,6 +209,27 @@ namespace {
         send(it->second);
       }
       if (result == -1) return;
+      auto time = std::chrono::steady_clock::now();
+      std::list<std::string> toDelete;
+      for (auto i = sent_results.begin(); i != sent_results.end(); i++) {
+        if (time > (i->second.lastSeen + std::chrono::seconds(30))) {
+          std::map<flutter::EncodableValue, flutter::EncodableValue> empty_map;
+          channel->InvokeMethod("onServiceLost",
+
+            std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
+                     {flutter::EncodableValue("hostname"), flutter::EncodableValue(i->second.hostname)},
+                     {flutter::EncodableValue("port"), flutter::EncodableValue(i->second.port)},
+                     {flutter::EncodableValue("name"), flutter::EncodableValue(i->second.name)},
+                     {flutter::EncodableValue("txt"), flutter::EncodableValue(empty_map)}
+              }
+            ))
+          );
+          toDelete.push_back(i->first);
+        }
+      }
+      for (auto i = toDelete.begin(); i != toDelete.end(); i++) {
+        sent_results.erase(*i);
+      }
     }
     delete this;
   }

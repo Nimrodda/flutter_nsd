@@ -78,7 +78,7 @@ class FlutterNsd {
           _streamController.add(nsdServiceInfo);
           break;
         case 'onServiceLost':
-          // TODO issue #28
+        // TODO issue #28
           break;
         default:
           throw MissingPluginException();
