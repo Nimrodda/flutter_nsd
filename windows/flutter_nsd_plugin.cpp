@@ -102,7 +102,7 @@ namespace {
         name = name.substr(0, pos);
       }
 
-    } 
+    }
     channel->InvokeMethod("onServiceResolved",
 
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
@@ -172,8 +172,9 @@ namespace {
   void MdnsRequest::callbackTXT(const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
     MAKE_STRING(key);
     MAKE_STRING(value);
+    std::vector<uint8_t>  _vector(_value.begin(), _value.end()); // flutter_nsd expects txt records as UInt8List
     MdnsResult& packet = packets[base];
-    packet.txt[flutter::EncodableValue(_key)] = flutter::EncodableValue(_value);
+    packet.txt[flutter::EncodableValue(_key)] = flutter::EncodableValue(_vector);
     process(base, last);
   }
 
