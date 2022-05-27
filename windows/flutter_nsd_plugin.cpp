@@ -385,7 +385,7 @@ void call_HandlePTRRecord(const void* p, const void* base, boolean last, STRING_
   }
 
   void call_HandleTXTRecord(const void* p, const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
-    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(key));
+    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(value));
   }
 
 
