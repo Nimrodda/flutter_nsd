@@ -193,8 +193,9 @@ namespace {
   void MdnsRequest::callbackTXT(const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
     MAKE_STRING(key);
     MAKE_STRING(value);
+    std::vector<uint8_t>  _vector(_value.begin(), _value.end()); // flutter_nsd expects txt values as UInt8List not as string
     MdnsResult& packet = packets[base];
-    packet.txt[flutter::EncodableValue(_key)] = flutter::EncodableValue(_value);
+    packet.txt[flutter::EncodableValue(_key)] = flutter::EncodableValue(_vector);
     process(base, last);
   }
 
@@ -384,7 +385,7 @@ void call_HandlePTRRecord(const void* p, const void* base, boolean last, STRING_
   }
 
   void call_HandleTXTRecord(const void* p, const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
-    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(key));
+    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(value));
   }
 
 
