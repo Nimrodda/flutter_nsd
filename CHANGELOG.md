@@ -1,3 +1,8 @@
+## 1.3.3
+
+Fixed #33: Windows: TXT records are returned as string instead of UInt8List, causing failure (Thanks @jnstahl)
+Fixed #36: Windows: txt records are sent as [key: key] instead of [key: value] (Thanks @jnstahl)
+
 ## 1.3.2
 
 This release is identical in functionality to the previous one. It only fixes pub.dev analysis
