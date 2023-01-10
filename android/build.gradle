@@ -19,7 +19,7 @@ group 'com.nimroddayan.flutternsd'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.4.0'
+    ext.kotlin_version = '1.5.20'
     repositories {
         google()
         jcenter()
