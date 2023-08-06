@@ -192,7 +192,11 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onStartDiscoveryFailed(serviceType: String, errorCode: Int) {
       Timber.w("Failed to start NSD. Error code $errorCode")
-      nsdManager?.stopServiceDiscovery(this)
+      try {
+        nsdManager?.stopServiceDiscovery(this)
+      } catch (ex: IllegalArgumentException) {
+        Timber.d("Cannot stop service, listener not registered")
+      }
       mainHandler.post {
         channel.invokeMethod("onStartDiscoveryFailed", errorCode)
       }
@@ -200,7 +204,11 @@ class FlutterNsdPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onStopDiscoveryFailed(serviceType: String, errorCode: Int) {
       Timber.w("Failed to stop NSD. Error code $errorCode")
-      nsdManager?.stopServiceDiscovery(this)
+      try {
+        nsdManager?.stopServiceDiscovery(this)
+      } catch (ex: IllegalArgumentException) {
+        Timber.d("Cannot stop service, listener not registered")
+      }
       mainHandler.post {
         channel.invokeMethod("onStopDiscoveryFailed", errorCode)
       }
