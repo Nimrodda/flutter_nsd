@@ -1,3 +1,6 @@
+## 1.4.0
+Added support for Kotlin 1.5.20
+
 ## 1.3.3
 
 Fixed #33: Windows: TXT records are returned as string instead of UInt8List, causing failure (Thanks @jnstahl)
