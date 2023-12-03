@@ -101,7 +101,7 @@ namespace {
     else {
       struct hostent* ent = gethostbyname(packet.hostname.c_str());
       if (ent == NULL) {
-        printf("cannot resolve hostname %s, returning IP address %s", packet.hostname.c_str(), packet.ipv4address.c_str());
+        //printf("cannot resolve hostname %s, returning IP address %s", packet.hostname.c_str(), packet.ipv4address.c_str());
         packet.hostname = packet.ipv4address;
       }
     }
@@ -161,7 +161,7 @@ namespace {
   void MdnsRequest::callbackSRV(const void* base, boolean last, STRING_ARG_DECL(name), STRING_ARG_DECL(hostname), int port) {
     MAKE_STRING(name);
     MAKE_STRING(hostname);
-    printf("resolved: %s, %s\n\r", _name.c_str(), _hostname.c_str());
+    //printf("resolved: %s, %s\n\r", _name.c_str(), _hostname.c_str());
 
     MdnsResult& packet = packets[base];
     packet.name = _name;
@@ -385,7 +385,7 @@ void call_HandlePTRRecord(const void* p, const void* base, boolean last, STRING_
   }
 
   void call_HandleTXTRecord(const void* p, const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
-    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(value));
+    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(key));
   }
 
 
