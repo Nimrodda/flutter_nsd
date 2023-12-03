@@ -10,7 +10,7 @@ Add the dependency to pubspec.yaml:
 
 ```
 dependencies:
-  flutter_nsd: ^1.3.2
+  flutter_nsd: ^1.4.0
 ```
 
 ## Getting Started
@@ -113,7 +113,7 @@ Then scan for this service using the example app on any of the supported platfor
 
 ## License
 
-Copyright 2022 Nimrod Dayan nimroddayan.com
+Copyright 2023 Nimrod Dayan nimroddayan.com
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
