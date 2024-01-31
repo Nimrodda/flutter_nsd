@@ -37,6 +37,7 @@ namespace {
     std::string servicename;
     std::string ipv4address;
     std::string ipv6address;
+    flutter::EncodableList addressList;
     int port;
     std::map<flutter::EncodableValue, flutter::EncodableValue> txt;
   };
@@ -109,6 +110,7 @@ namespace {
                {flutter::EncodableValue("hostname"), flutter::EncodableValue(packet.hostname)},
                {flutter::EncodableValue("ipv4address"), flutter::EncodableValue(packet.ipv4address)},
                {flutter::EncodableValue("ipv6address"), flutter::EncodableValue(packet.ipv6address)},
+               {flutter::EncodableValue("hostAddresses"), packet.addressList},
                {flutter::EncodableValue("port"), flutter::EncodableValue(packet.port)},
                {flutter::EncodableValue("name"), flutter::EncodableValue(name)},
                {flutter::EncodableValue("txt"), flutter::EncodableValue(packet.txt)}
@@ -158,6 +160,7 @@ namespace {
     MdnsResult& packet = packets[base];
     packet.dnsname = _hostname;
     packet.ipv4address = _address;
+    packet.addressList.push_back(flutter::EncodableValue(_address));
     process(base, last);
 
   }
@@ -167,6 +170,7 @@ namespace {
     MdnsResult& packet = packets[base];
     packet.dnsname = _hostname;
     packet.ipv6address = _address;
+    packet.addressList.push_back(flutter::EncodableValue(_address));
     process(base, last);
   }
   void MdnsRequest::callbackTXT(const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
