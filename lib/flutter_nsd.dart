@@ -91,7 +91,12 @@ class FlutterNsd {
     final int port = call.arguments['port'];
     final String name = call.arguments['name'];
     final Map<String, Uint8List> txt = Map.from(call.arguments['txt']);
-    var nsdServiceInfo = NsdServiceInfo(hostname, port, name, txt);
+    List<String>? hostAddresses;
+    List<Object?>? rawAddresses = call.arguments['hostAddresses'];
+    if (rawAddresses != null) {
+      hostAddresses = rawAddresses.where((e) => e != null).map((e) => e.toString()).toList();
+    }
+    var nsdServiceInfo = NsdServiceInfo(hostname, port, name, txt, hostAddresses: hostAddresses);
     return nsdServiceInfo;
   }
 
@@ -104,11 +109,12 @@ class FlutterNsd {
 /// Info class for holding discovered service
 class NsdServiceInfo {
   final String? hostname;
+  final List<String>? hostAddresses;
   final int? port;
   final String? name;
   final Map<String, Uint8List>? txt;
 
-  NsdServiceInfo(this.hostname, this.port, this.name, this.txt);
+  NsdServiceInfo(this.hostname, this.port, this.name, this.txt, {this.hostAddresses});
 }
 
 /// List of possible error codes of NsdError

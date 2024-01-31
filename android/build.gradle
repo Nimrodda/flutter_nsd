@@ -47,7 +47,7 @@ android {
         namespace 'com.nimroddayan.flutternsd'
     }
 
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
