@@ -19,6 +19,8 @@ package com.nimroddayan.flutternsd
 
 import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.NonNull
@@ -241,10 +243,17 @@ private fun NsdServiceInfo?.toMap(): Map<String, Any?> {
   val port = this?.port
   val name = this?.serviceName
   val txt = this?.attributes
+  val hostAddresses =  if(Build.VERSION.SDK_INT > VERSION_CODES.UPSIDE_DOWN_CAKE) {
+    this?.hostAddresses?.map { it.hostAddress }
+  } else {
+    listOf(this?.host?.hostAddress)
+  }
+
 
   Timber.v("Resolved service: $name-$hostname:$port $txt")
   return mapOf(
     "hostname" to hostname,
+    "hostAddresses" to hostAddresses,
     "port" to port,
     "name" to name,
     "txt" to txt
