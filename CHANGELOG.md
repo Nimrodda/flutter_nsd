@@ -1,4 +1,22 @@
+## 1.4.0
+Added support for Kotlin 1.5.20
+
+## 1.3.3
+
+Fixed #33: Windows: TXT records are returned as string instead of UInt8List, causing failure (Thanks @jnstahl)
+Fixed #36: Windows: txt records are sent as [key: key] instead of [key: value] (Thanks @jnstahl)
+
+## 1.3.2
+
+This release is identical in functionality to the previous one. It only fixes pub.dev analysis
+errors.
+
+* Fixed: pub.dev analsis error
+
 ## 1.3.1
+
+This release is identical in functionality to the previous one. It only fixes pub.dev analysis
+errors.
 
 * Fixed #27: Address pub.dev static analysis
 * Fixed various lint errors

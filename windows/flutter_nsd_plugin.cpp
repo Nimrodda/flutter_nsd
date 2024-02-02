@@ -42,6 +42,14 @@ namespace {
     std::map<flutter::EncodableValue, flutter::EncodableValue> txt;
   };
 
+  class MdnsSentResult {
+  public:
+    std::chrono::steady_clock::time_point lastSeen;
+    std::string name;
+    std::string hostname;
+    int port;
+  };
+
   class MdnsRequest {
 
   public:
@@ -65,7 +73,7 @@ namespace {
     volatile boolean keepRunning;
     std::shared_ptr<flutter::MethodChannel<flutter::EncodableValue>> channel;
     std::map<const void*, MdnsResult> packets;
-    std::set<std::string> sent_results;
+    std::map<std::string, MdnsSentResult> sent_results;
 
   };
 
@@ -79,17 +87,22 @@ namespace {
 
   void MdnsRequest::send(MdnsResult& packet) {
     auto digest = packet.name + packet.dnsname + packet.hostname + packet.ipv4address + packet.ipv6address + std::to_string(packet.port);
+    auto time = std::chrono::steady_clock::now();
+
+
     if (sent_results.find(digest) != sent_results.end()) {
+      sent_results[digest].lastSeen = time;
       return;
     }
-    sent_results.insert(digest);
+
+
     if (packet.hostname.empty()) {
       packet.hostname = packet.ipv4address;
     }
     else {
       struct hostent* ent = gethostbyname(packet.hostname.c_str());
       if (ent == NULL) {
-        printf("cannot resolve hostname %s, returning IP address %s", packet.hostname.c_str(), packet.ipv4address.c_str());
+        //printf("cannot resolve hostname %s, returning IP address %s", packet.hostname.c_str(), packet.ipv4address.c_str());
         packet.hostname = packet.ipv4address;
       }
     }
@@ -103,7 +116,15 @@ namespace {
         name = name.substr(0, pos);
       }
 
-    } 
+    }
+    MdnsSentResult result;
+    result.name = name;
+    result.hostname = packet.hostname;
+    result.port = packet.port;
+    result.lastSeen = time;
+    sent_results[digest] = result;
+
+
     channel->InvokeMethod("onServiceResolved",
 
       std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
@@ -142,7 +163,7 @@ namespace {
   void MdnsRequest::callbackSRV(const void* base, boolean last, STRING_ARG_DECL(name), STRING_ARG_DECL(hostname), int port) {
     MAKE_STRING(name);
     MAKE_STRING(hostname);
-    printf("resolved: %s, %s\n\r", _name.c_str(), _hostname.c_str());
+    //printf("resolved: %s, %s\n\r", _name.c_str(), _hostname.c_str());
 
     MdnsResult& packet = packets[base];
     packet.name = _name;
@@ -176,8 +197,9 @@ namespace {
   void MdnsRequest::callbackTXT(const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
     MAKE_STRING(key);
     MAKE_STRING(value);
+    std::vector<uint8_t>  _vector(_value.begin(), _value.end()); // flutter_nsd expects txt values as UInt8List not as string
     MdnsResult& packet = packets[base];
-    packet.txt[flutter::EncodableValue(_key)] = flutter::EncodableValue(_value);
+    packet.txt[flutter::EncodableValue(_key)] = flutter::EncodableValue(_vector);
     process(base, last);
   }
 
@@ -192,6 +214,27 @@ namespace {
         send(it->second);
       }
       if (result == -1) return;
+      auto time = std::chrono::steady_clock::now();
+      std::list<std::string> toDelete;
+      for (auto i = sent_results.begin(); i != sent_results.end(); i++) {
+        if (time > (i->second.lastSeen + std::chrono::seconds(30))) {
+          std::map<flutter::EncodableValue, flutter::EncodableValue> empty_map;
+          channel->InvokeMethod("onServiceLost",
+
+            std::make_unique<flutter::EncodableValue>(flutter::EncodableValue(flutter::EncodableMap{
+                     {flutter::EncodableValue("hostname"), flutter::EncodableValue(i->second.hostname)},
+                     {flutter::EncodableValue("port"), flutter::EncodableValue(i->second.port)},
+                     {flutter::EncodableValue("name"), flutter::EncodableValue(i->second.name)},
+                     {flutter::EncodableValue("txt"), flutter::EncodableValue(empty_map)}
+              }
+            ))
+          );
+          toDelete.push_back(i->first);
+        }
+      }
+      for (auto i = toDelete.begin(); i != toDelete.end(); i++) {
+        sent_results.erase(*i);
+      }
     }
     delete this;
   }
@@ -346,7 +389,7 @@ void call_HandlePTRRecord(const void* p, const void* base, boolean last, STRING_
   }
 
   void call_HandleTXTRecord(const void* p, const void* base, boolean last, STRING_ARG_DECL(key), STRING_ARG_DECL(value)) {
-    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(key));
+    ((MdnsRequest*)p)->callbackTXT(base, last, STRING_ARG_CALL(key), STRING_ARG_CALL(value));
   }
 
 
