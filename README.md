@@ -90,7 +90,7 @@ this [video](https://developer.apple.com/videos/play/wwdc2020/10110/).
 
 *Note that you don't need to worry about modifying `Info.plist` if you are just testing with a simulator.*
 
-*The iOS and macOS implementations currently do not return *hostAddresses*
+The iOS and macOS implementations currently do not return *hostAddresses*
 
 ## Note about Windows
 
