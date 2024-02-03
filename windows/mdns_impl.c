@@ -7,9 +7,9 @@
 #include <iphlpapi.h>
 #define sleep(x) Sleep(x * 1000)
 
-#if (_DEBUG == 0)
+//#if (_DEBUG == 0)
 #define printf
-#endif
+//#endif
 
 #include "mdns.h"
 
