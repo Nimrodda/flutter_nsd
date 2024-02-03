@@ -109,6 +109,7 @@ class FlutterNsd {
 /// Info class for holding discovered service
 class NsdServiceInfo {
   final String? hostname;
+  /// A list of strings containing the known addresses for this host (Ipv4 and Ipv6). The iOS implementation currently returns null
   final List<String>? hostAddresses;
   final int? port;
   final String? name;
