@@ -1,3 +1,10 @@
+
+## 1.5.0
+Fixed #22: NsdServiceInfo now includes a list of addresses for the service (ipv4 or ipv6). This is
+currently not supported on iOS or macOS
+
+
+
 ## 1.4.0
 Added support for Kotlin 1.5.20
 
