@@ -10,18 +10,14 @@ jobs:
   windows-build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: kuhnroyal/flutter-fvm-config-action@v1
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          channel: ${{ env.FLUTTER_CHANNEL }}
+      - uses: actions/checkout@v4
+      - uses: kuhnroyal/flutter-fvm-config-action@v3
       - run: |
           cd example/
           flutter config --enable-windows-desktop
           flutter build windows
         # working-directory: example
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         with:
           name: windows-build
           path: |
