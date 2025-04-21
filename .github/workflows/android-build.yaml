@@ -16,9 +16,9 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
       - uses: kuhnroyal/flutter-fvm-config-action@v3
-      - run: flutter pub get
+      - run: fvm flutter pub get
         working-directory: example
-      - run: flutter build apk
+      - run: fvm flutter build apk
         working-directory: example
       - uses: actions/upload-artifact@v4
         with:
