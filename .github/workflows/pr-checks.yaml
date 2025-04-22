@@ -16,7 +16,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-      - uses: kuhnroyal/flutter-fvm-config-action@v3
+      - uses: kuhnroyal/flutter-fvm-config-action/setup@v3
       - run: flutter pub get
         working-directory: example
       - run: flutter build apk
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: kuhnroyal/flutter-fvm-config-action@v3
+      - uses: kuhnroyal/flutter-fvm-config-action/setup@v3
       - run: |
           flutter pub get
           flutter analyze
@@ -41,7 +41,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: kuhnroyal/flutter-fvm-config-action@v3
+      - uses: kuhnroyal/flutter-fvm-config-action/setup@v3
       - run: flutter pub get
         working-directory: example
       - run: flutter build ios --release --no-codesign
@@ -57,7 +57,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: kuhnroyal/flutter-fvm-config-action@v3
+      - uses: kuhnroyal/flutter-fvm-config-action/setup@v3
       - run: flutter config --enable-macos-desktop
         working-directory: example
       - run: flutter build macos
@@ -73,7 +73,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: kuhnroyal/flutter-fvm-config-action@v3
+      - uses: kuhnroyal/flutter-fvm-config-action/setup@v3
       - run: |
           cd example/
           flutter config --enable-windows-desktop
