@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Nimrod Dayan nimroddayan.com
+ * Copyright 2025 Nimrod Dayan nimroddayan.com
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,19 +15,6 @@
  *
  */
 
-buildscript {
-    ext.kotlin_version = '1.7.10'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 allprojects {
     repositories {
         google()
@@ -35,14 +22,17 @@ allprojects {
     }
 }
 
-rootProject.buildDir = '../build'
+val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
+rootProject.layout.buildDirectory.value(newBuildDir)
+
 subprojects {
-    project.buildDir = "${rootProject.buildDir}/${project.name}"
+    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
+    project.layout.buildDirectory.value(newSubprojectBuildDir)
 }
 subprojects {
-    project.evaluationDependsOn(':app')
+    project.evaluationDependsOn(":app")
 }
 
-tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+tasks.register<Delete>("clean") {
+    delete(rootProject.layout.buildDirectory)
 }
