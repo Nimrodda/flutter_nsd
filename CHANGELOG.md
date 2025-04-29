@@ -1,3 +1,5 @@
+## 1.6.0
+Updated to Flutter 3.29.3
 
 ## 1.5.0
 Fixed #22: NsdServiceInfo now includes a list of addresses for the service (ipv4 or ipv6). This is
