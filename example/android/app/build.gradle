@@ -24,61 +24,61 @@ plugins {
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
+  localPropertiesFile.withReader('UTF-8') { reader ->
+    localProperties.load(reader)
+  }
 }
 
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
 if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
+  flutterVersionCode = '1'
 }
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
+  flutterVersionName = '1.0'
 }
 
 android {
-    namespace = "com.nimroddayan.flutternsd.example"
-    compileSdkVersion 35
+  namespace = "com.nimroddayan.flutternsd.example"
+  compileSdkVersion 35
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
+  sourceSets {
+    main.java.srcDirs += 'src/main/kotlin'
+  }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
+  lintOptions {
+    disable 'InvalidPackage'
+  }
 
-    defaultConfig {
-        applicationId "com.nimroddayan.flutternsd.example"
-        minSdkVersion 23
-        targetSdkVersion 29
-        versionCode flutterVersionCode.toInteger()
-        versionName flutterVersionName
-    }
+  defaultConfig {
+    applicationId "com.nimroddayan.flutternsd.example"
+    minSdkVersion flutter.minSdkVersion
+    targetSdkVersion flutter.targetSdkVersion
+    versionCode flutterVersionCode.toInteger()
+    versionName flutterVersionName
+  }
 
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-        }
+  buildTypes {
+    release {
+      signingConfig signingConfigs.debug
     }
+  }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+  }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+  kotlinOptions {
+    jvmTarget = "1.8"
+  }
 }
 
 flutter {
-    source '../..'
+  source '../..'
 }
 
 dependencies {
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+  implementation 'com.jakewharton.timber:timber:4.7.1'
 }
