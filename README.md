@@ -37,6 +37,7 @@ Start discovery when needed. At this point, if any services are discovered, your
 will get notified. In case of an error, `NsdError` is emitted to the stream (Currently it's
 just a generic error, but in the future, it will be more specific).
 
+> Notice that on Android the service name must end with a dot otherwise the service will not be found.
 
 ```dart
 void startDiscoveryButton() async {
